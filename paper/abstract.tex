@@ -1,0 +1,11 @@
+Industrial models can quickly reach a complexity and size that makes storing
+them entirely in single files prohibitive. These larger models are typically
+either broken up into smaller files, or stored in a database. Using smaller
+files is simpler, but running a global query can still require loading all
+the files and therefore run into the same scalability issues. As for databases,
+most people go directly for well-known relational databases. However, a
+relational database is not the only answer for scalability: we can use NoSQL
+databases to solve the issues with queries over fragmented models, or replace
+relational model stores altogether.
+
+In this tutorial, we will discuss two approaches for achieving scalable model persistence and querying through our Hawk and NeoEMF open-source tools. Hawk's approach is to use a NoSQL database as an efficient index to the models, focusing on improving query speed while keeping your existing persistence as is. NeoEMF allows for persisting models in a NoSQL database, which can speed up loading and writing of the models as well. The presenters are the original developers of the tools, which have seen industrial adoption through the MONDO EU FP7 and ITEA3 MEASURE projects.

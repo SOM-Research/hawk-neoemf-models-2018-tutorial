@@ -1,0 +1,204 @@
+\documentclass[conference]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{cite}
+\usepackage[pdftex]{graphicx}
+\usepackage{amsmath}
+\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{url}
+
+\usepackage[svgnames]{xcolor}
+\newcommand{\todo}[1]{{\color{red}#1}}
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+\begin{document}
+
+% paper title
+% Titles are generally capitalized except for words such as a, an, and, as,
+% at, but, by, for, in, nor, of, on, or, the, to and up, which are usually
+% not capitalized unless they are the first or last word of the title.
+% Linebreaks \\ can be used within to get better formatting as desired.
+% Do not put math or special symbols in the title.
+\title{Taming Large Models using Hawk and NeoEMF}
+
+\author{\IEEEauthorblockN{Antonio García-Domínguez\IEEEauthorrefmark{1},
+Dimitrios Kolovos\IEEEauthorrefmark{2},
+Konstantinos Barmpis,\IEEEauthorrefmark{2},
+Gwendal Daniel\IEEEauthorrefmark{3},
+Gerson Sunyé\IEEEauthorrefmark{4}
+}
+\IEEEauthorblockA{\IEEEauthorrefmark{1}School of Engineering and Applied Science, Aston University, Birmingham, UK\\
+a.garcia-dominguez@aston.ac.uk}
+\IEEEauthorblockA{\IEEEauthorrefmark{2}Department of Computer Science, University of York, York, UK\\
+\{dimitris.kolovos,konstantinos.barmpis\}@york.ac.uk}
+\IEEEauthorblockA{\IEEEauthorrefmark{3}Universitat Oberta de Catalunya, Barcelona, Spain\\
+gdaniel@uoc.edu}
+\IEEEauthorblockA{\IEEEauthorrefmark{4}LS2N - University of Nantes, Nantes, France\\
+gerson.sunye@ls2n.fr}
+}
+
+% for over three affiliations, or if they all won't fit within the width
+% of the page, use this alternative format:
+% 
+%\author{\IEEEauthorblockN{Michael Shell\IEEEauthorrefmark{1},
+%Homer Simpson\IEEEauthorrefmark{2},
+%James Kirk\IEEEauthorrefmark{3}, 
+%Montgomery Scott\IEEEauthorrefmark{3} and
+%Eldon Tyrell\IEEEauthorrefmark{4}}
+%\IEEEauthorblockA{\IEEEauthorrefmark{1}School of Electrical and Computer Engineering\\
+%Georgia Institute of Technology,
+%Atlanta, Georgia 30332--0250\\ Email: see http://www.michaelshell.org/contact.html}
+%\IEEEauthorblockA{\IEEEauthorrefmark{2}Twentieth Century Fox, Springfield, USA\\
+%Email: homer@thesimpsons.com}
+%\IEEEauthorblockA{\IEEEauthorrefmark{3}Starfleet Academy, San Francisco, California 96678-2391\\
+%Telephone: (800) 555--1212, Fax: (888) 555--1212}
+%\IEEEauthorblockA{\IEEEauthorrefmark{4}Tyrell Inc., 123 Replicant Street, Los Angeles, California 90210--4321}}
+
+
+
+\maketitle
+
+% MODELS 2018 asks for a max 200 word abstract
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% MODELS 2018: description of the workshop shouldn't exceed 4 pages
+
+\section{Keywords}
+
+Scalability, model persistence, NoSQL, graph databases, key-value stores.
+
+\section{Presenters}
+
+The presenters have experience in giving talks and tutorials at international
+conferences and workshops, and have previously delivered tutorials at
+\emph{MoDELS} (e.g. the Epsilon tutorial in 2016) and \emph{ECMFA} in particular.
+
+\textbf{Antonio Garcia-Dominguez} is Lecturer in Computer Science in the School of Engineering and Applied Science at Aston University. Antonio's current research focuses on scalable model-driven engineering, specifically high-performance querying through the development of the Hawk model indexing framework. Antonio has driven the adoption of Hawk in several European companies over the MONDO EU FP7 and ITEA3 MEASURE projects.
+
+\textbf{Dimitris Kolovos} is a Professor of Software Engineering in the Department of Computer Science at the University of York, where he researches automated and model-based software engineering. He leads the open-source Epsilon model-based software engineering platform, and led the MONDO EU FP7 work package that produced the Hawk tool. Dimitris has co-authored more than 150 peer-reviewed papers and has co-organised several workshops (including BigMDE at STAF and COMMitMDE at MODELS).
+
+\textbf{Konstantinos Barmpis} %\todo{please complete}
+is a Research Associate in the Department of Computer Science at the University of York, currently focusing on repository mining, distributed systems and domain-specific languages. He has produced the core components of the Hawk tool as part of the MONDO EU FP7 project and continues to support its development. 
+
+\textbf{Gerson Sunyé} %\todo{please complete}
+is an Associate Professor of Software Engineering in the Department of Computer Science at the University of Nantes, where he researches software testing and model-based software engineering.
+He leads the Atlanmod open-source modelling platform and is the initiator of the NeoEMF tool.
+Gerson has co-authored more than 60 peer-reviewed papers.
+
+\textbf{Gwendal Daniel} %\todo{please complete}
+is a post-doctoral fellow in the SOM Research Lab at Internet Interdisciplinary Institute (IN3), a research centre of the Universitat Oberta de Catalunya (UOC). His research interests include model persistence, query, and transformation techniques, as well as NoSQL data modelling. Gwendal is one of the core committers of the NeoEMF project, and the main contributor of the Mogwa\"i query framework.
+
+
+\section{Basic information}
+
+\textbf{Proposed length:} 3 hours.
+
+\textbf{Level:} Intermediate.
+
+\textbf{Prerequisite background:} some experience on developing modelling tools with file- or database-backed persistence is expected. No experience with NoSQL technologies is required, but a basic grasp on graphs and relational databases is assumed. The concepts behind various classes of NoSQL databases (especially key-store and graph ones) will be introduced as needed throughout the tutorial.
+
+\textbf{Required infrastructure:} this tutorial will not need anything besides
+the data projector. Demos and presentations will be driven from the laptops of
+the presenters.
+
+\section{Description and outline}
+
+The tutorial will start by presenting the limitations of monolithic file-based persistence when models become larger and larger, and then show how NoSQL technologies can be leveraged to solve these issues. The suggested approaches will be demonstrated and evaluated through the Hawk and NeoEMF tool suites, which use the technologies in complementary ways:
+\begin{itemize}
+\item Hawk provides scalable querying with no changes to existing persistence. Hawk watches over collections of file-based models, and populates a graph database (e.g. Neo4j or OrientDB) from them. Essentially, this builds an interconnected \emph{index} of those files. Instead of querying the original files, users can query the Hawk index through the provided query language: the Epsilon Object Language. EOL queries are mapped transparently to the underlying APIs of the backend.
+
+\item NeoEMF offers an alternative to XMI for persisting models, providing support for different database backends.
+NeoEMF allows users to choose the suitable trade-off between performance and information retrieval ability of the models.
+For instance, graph databases  provide high-level query languages allowing models to be directly queried, while map databases provide faster model storage, but do not provide query languages.
+NeoEMF is coupled with Mogwa\"i, a model query framework, which maps model native queries, written in OCL, to database native ones.
+
+\end{itemize}
+
+After a demonstration, the developers of the two tools will discuss the lessons learned during the development of their tools, and what are the ideal use cases for their technologies. Further discussion will touch upon the importance of engineering solutions that can quickly adopt new storage technologies, and the trade-offs between the approaches demonstrated by Hawk and NeoEMF.
+
+The tutorial will consist of four parts:
+
+\begin{itemize}
+\item The first 30 minutes will be dedicated to a general introduction to
+  NoSQL (what is it, what are the most common types of NoSQL stores, and
+  some of the current technologies in the field), and how it can be useful for
+  efficient loading, storage and/or querying of models.
+
+\item The next hour will be dedicated to ``NoSQL as an index'', introducing Hawk
+  and demonstrating its use on indexing various types of models. Some of the
+  types of models under consideration are domain-specific EMF models (e.g. the
+  ``set0'' model from the ``SharenGo Java Legacy Reverse-Engineering'' GraBaTs
+  2009 case study~\cite{Grabats2009}), Eclipse Papyrus UML models (using
+  profiles), and Modelio EXML models.
+
+  The demonstration will go through a sequence of queries demonstrating Hawk's
+  capabilities, including indexed attributes, derived attributes and edges, and
+  incremental updating.
+
+  After the demo, there will be further discussion on the various NoSQL
+  technologies that Hawk has integrated so far, and our experiences with their
+  capabilities and performance.
+
+\item Another hour will be dedicated to ``NoSQL as a store'', introducing the NeoEMF persistence framework and the Mogwaï query library. 
+The demonstration will start by an explanation of how Java underlying models are mapped to different NoSQL database schemas,
+and how to load and save models in NeoEMF.
+
+Then, the demonstration will go through a sequence of Mogwa\"i's queries, illustrating how OCL queries are mapped to Gremlin,
+a graph database query language and how results are mapped back to models.
+
+After the demonstration, we will further discuss the good and bad design choices we did during the development of a NoSQL persistence layer.
+
+
+\item The last 30 minutes will be used to wrap up the session and promote
+  discussion with the attendees. The presenters will comment on the trade-offs
+  between the two approaches, and when one approach is better suited over the
+  other. We will draw on prior experience in industrial integration within the
+  MONDO~\cite{kolovos_mondo_2016} and MEASURE~\cite{hawk-moma3n18}
+  projects.
+  % \todo{Gerson: any more examples?} Not really, I could talk about the french project ITM-Factory, 
+  % but I'm not sure its' relevant.
+\end{itemize}
+
+By the end of the tutorial, participants will:
+
+\begin{itemize}
+\item appreciate the benefits that NoSQL technologies can bring to the real-world scalability of modelling,
+\item understand the trade-offs between using NoSQL technologies as a side-by-side index or as a replacement for their persistence,
+\item have a basic familiarity on the use of the Hawk tool for indexing existing models for high-performance querying, and the use of NeoEMF as an alternative scalable model persistence framework,
+\item understand the extension capabilities of Hawk and NeoEMF.
+\end{itemize}
+
+\section{Novelty}
+
+We have consulted the program of past MODELS editions up to 2006, and we have
+not found any mentions of tutorials about NoSQL persistence for models, or even
+about alternative approaches for model persistence.
+
+Tutorials on use of NoSQL technologies for large datasets are more prevalent in
+the database research community (e.g. in the VLDB series of
+conferences\footnote{http://vldb2018.lncc.br/call-for-tutorials.html}), but
+these typically are not concerned with the specific challenges faced by the
+modelling community. The proposed tutorial includes our experience
+interoperating with tools in the modelling ecosystem, such as
+Epsilon~\cite{EpsilonBook}, ATL~\cite{atl} or
+Modelio\footnote{\url{https://www.modelio.org/}}, and evaluating other similar
+approaches such as Eclipse CDO\footnote{\url{https://www.eclipse.org/cdo/}}.
+
+%\section*{Acknowledgment}
+%
+%The authors would like to thank...
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{IEEEtran}
+\bibliography{bibliography}
+
+% that's all folks
+\end{document}
