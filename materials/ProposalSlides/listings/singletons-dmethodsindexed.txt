@@ -1,4 +1,0 @@
-return MethodDeclaration.all.select(md |
-  md.isPublic = true and md.isStatic = true
-  and md.isSameReturnType = true
-).collect( td | td.eContainer ).asSet;

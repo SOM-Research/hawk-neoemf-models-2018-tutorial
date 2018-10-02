@@ -1,3 +1,0 @@
-return SimpleName.all
-  .select(sn | sn.identifier='IdeInputFileObject')
-  .eContainer.select(c|c.isKindOf(TypeDeclaration));

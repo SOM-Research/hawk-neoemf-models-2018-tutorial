@@ -1,7 +1,0 @@
-return TypeDeclaration.all.select(td | td.bodyDeclarations.exists(
-  md:MethodDeclaration | md.returnType.isTypeOf(SimpleType) 
-    and md.returnType.name.fullyQualifiedName
-      = td.name.fullyQualifiedName
-    and md.modifiers.exists(mod:Modifier | mod.public = true)
-    and md.modifiers.exists(mod:Modifier | mod.static = true)
-));
