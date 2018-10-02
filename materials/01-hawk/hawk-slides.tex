@@ -1,0 +1,528 @@
+\documentclass[10pt]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\graphicspath{{}{figures/}}
+
+\usetheme[progressbar=frametitle]{metropolis}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.12}
+\usepgfplotslibrary{dateplot}
+
+\usetikzlibrary{calc,fit,patterns}
+\usepackage[absolute,overlay]{textpos}
+
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{columns=fullflexible}
+\lstdefinelanguage{EOL}{
+morekeywords={delete,import,for,while,in,and,or,self,operation,return,def,var,throw,if,new,else,transaction,abort,
+break,breakAll,continue,assert,assertError,not, switch, case, default},
+sensitive=true,
+morecomment=[l]{//},
+morecomment=[l]{--},
+morecomment=[s]{/*}{*/},
+morecomment=[s]{-*}{*-},
+morestring=[b]",
+morestring=[b]',
+showstringspaces=false
+}
+
+\lstnewenvironment{java}{\lstset{language=Java,
+		frame=tb,
+        tabsize=3,
+        morekeywords={implies, in, result},
+        basicstyle=\footnotesize,
+        keywordstyle=\bfseries,
+        ndkeywordstyle=\bfseries,
+        commentstyle=\itshape,
+		morecomment=[l]{--},
+        stringstyle=\ttfamily,
+		showspaces=false,
+        flexiblecolumns,
+        literate={->}{$\to$}{2} {--}{-$\,$-}{2} {<=}{$\le$}{2} {>=}{$\ge$}{2} {<>}{$<\,>$}{3},
+        sensitive, extendedchars, texcl}}{}
+
+\lstnewenvironment{ocl}{\lstset{language=[decorative]OCL,
+	frame=tb,
+	tabsize=3,
+	morekeywords={implies,result,flatten,body,init,OrderedSet,Tuple,TupleType,def,attr,oclIsUndefined,oclIsInvalid,OclState,let,in},
+	basicstyle=\footnotesize,
+	keywordstyle=\bfseries,
+	ndkeywordstyle=\bfseries,
+	commentstyle=\itshape,
+	stringstyle=\ttfamily,
+	showspaces=false,
+	flexiblecolumns,
+	literate={->}{$\to$}{2} {--}{-$\,$-}{2} {<=}{$\le$}{2} {>=}{$\ge$}{2} {<>}{$<\,>$}{3},
+	sensitive, extendedchars, texcl}}{}
+
+
+\lstdefinelanguage{gremlin}{
+morekeywords={as,def,fill,filter,groupCount,has,idx,inE,inV,is,label,length,match,outE,outV,v,values},
+sensitive=true,
+morecomment=[l]{//}
+}
+
+% "page cs" coordinate system
+% From http://tex.stackexchange.com/questions/89588/
+%
+% Defining a new coordinate system for the page:
+%
+% --------------------------
+% |(-1,1)    (0,1)    (1,1)|
+% |                        |
+% |(-1,0)    (0,0)    (1,0)|
+% |                        |
+% |(-1,-1)   (0,-1)  (1,-1)|
+% --------------------------
+\makeatletter
+\def\parsecomma#1,#2\endparsecomma{\def\page@x{#1}\def\page@y{#2}}
+\tikzdeclarecoordinatesystem{page}{
+    \parsecomma#1\endparsecomma
+    \pgfpointanchor{current page}{north east}
+    % Save the upper right corner
+    \pgf@xc=\pgf@x%
+    \pgf@yc=\pgf@y%
+    % save the lower left corner
+    \pgfpointanchor{current page}{south west}
+    \pgf@xb=\pgf@x%
+    \pgf@yb=\pgf@y%
+    % Transform to the correct placement
+    \pgfmathparse{(\pgf@xc-\pgf@xb)/2.*\page@x+(\pgf@xc+\pgf@xb)/2.}
+    \expandafter\pgf@x\expandafter=\pgfmathresult pt
+    \pgfmathparse{(\pgf@yc-\pgf@yb)/2.*\page@y+(\pgf@yc+\pgf@yb)/2.}
+    \expandafter\pgf@y\expandafter=\pgfmathresult pt
+}
+\makeatother
+% Draws a grid for easier referencing of page cs values
+\newcommand{\printtikzpagegrid}{
+  \tiny
+  \begin{tikzpicture}[overlay,remember picture,every node/.style={inner sep=.1em,draw=black!20,fill=white}]
+    \foreach \x in {0,...,9} {
+      \foreach \y in {0,...,9} {
+        \node at (page cs:0.\x,0.\y) {};
+        \node at (page cs:0.\x,-0.\y) {};
+        \node at (page cs:-0.\x,0.\y) {};
+        \node at (page cs:-0.\x,-0.\y) {};
+      }
+    }
+    \node at (page cs:0,0) {0,0};
+    \node at (page cs:0.5,0.5) {.5,.5};
+    \node at (page cs:0.5,-0.5) {.5,-.5};
+    \node at (page cs:-0.5,0.5) {-.5,.5};
+    \node at (page cs:-0.5,-0.5) {-.5,-.5};
+    \node at (page cs:1,1) {1,1};
+    \node at (page cs:1,-1) {1,-1};
+    \node at (page cs:-1,1) {-1,1};
+    \node at (page cs:-1,-1) {-1,-1};
+  \end{tikzpicture}
+  \normalsize
+}
+
+\title{Taming Large Models\\with Hawk and NeoEMF}
+%\subtitle{A modern beamer theme}
+\date{MoDELS'2018, 14--19 October 2018}
+\author{A. García-Domínguez, D. S. Kolovos, K. Barmpis, G. Daniel, G. Sunyé}
+%\institute{Center for modern beamer themes}
+% \titlegraphic{\hfill\includegraphics[height=1.5cm]{logo.pdf}}
+
+\begin{document}
+
+\maketitle
+
+\pgfset{/metropolis/inner/sectionpage/.cd, none}
+\section{Introduction}
+
+\pgfset{/metropolis/inner/sectionpage/.cd, progressbar}
+\section{Hawk}
+
+\begin{frame}{Hawk: indexing for fast querying over fragment collections}
+  \centering
+
+  \begin{columns}[t]
+    \column{.5\textwidth}
+    \centering
+    \begin{tikzpicture}[remember picture]
+      \node (oldapproach) {\includegraphics[width=\columnwidth,height=4.15cm,keepaspectratio]{old-approach}};
+    \end{tikzpicture}
+    \begin{block}{Usual approach}
+      \begin{enumerate}
+      \item Check out \textbf{all} files from VCS
+      \item Load fragments into memory
+      \item Run query (might go over all fragments)
+      \end{enumerate}
+    \end{block}
+
+    \column{.5\textwidth}
+    \centering
+    \begin{tikzpicture}[remember picture]
+      \node (newapproach) {\includegraphics[width=\columnwidth,height=4.15cm,keepaspectratio]{hawk-approach}};
+    \end{tikzpicture}
+    \begin{block}{With Hawk}
+      \begin{enumerate}
+      \item Hawk watches VCS, indexes
+      \item User queries Hawk over WS
+      \item Hawk runs query through NoSQL database efficiently
+      \item Hawk replies with result
+      \end{enumerate}
+    \end{block}
+
+  \end{columns}
+
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw[ultra thick,red,->] (oldapproach) -> (newapproach);
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Hawk: project website}
+  \begin{center}
+    \includegraphics[width=\textwidth]{hawk-github}
+  \end{center}
+
+  \begin{itemize}
+  \item \url{https://github.com/mondo-project/mondo-hawk}
+  \item Open source project under the Eclipse Public License
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Hawk: deployment}
+
+  \begin{center}
+    \includegraphics[width=\textwidth]{hawk-deployment}
+  \end{center}
+
+  \begin{itemize}
+  \item Hawk can run as Eclipse plug-in, Java library, or network service
+  \item We can have it watch over various types of locations:
+    \begin{itemize}
+    \item Version control systems (SVN/Git repositories)
+    \item File stores (local folders, Eclipse workspaces, HTTP locations)
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Hawk: component-based architecture}
+  \begin{center}
+    \includegraphics[width=.6\textwidth]{hawk-architecture}
+  \end{center}
+
+  \begin{itemize}
+  \item Core: incremental graph updating + component interfaces
+  \item Backends: Neo4j (fastest), OrientDB (multi-master), Greycat
+  \item Clients: Eclipse GUI, cross-language Apache Thrift web services
+  \item Query engines: Epsilon Object/Pattern Languages, OrientDB SQL
+  \item Model parsers: EMF/Modelio models, Eclipse plug-in manifests...
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Hawk: example for a library model}
+  \centering
+  \includegraphics[width=\textwidth]{hawk-library-cropped}
+  \begin{overprint}
+    \onslide<1>
+    \begin{tikzpicture}[remember picture,overlay]
+      \draw[fill=white,fill opacity=0.8,draw=none]
+      (page cs:-0.345,-0.4) rectangle (page cs:0.9,0.78);
+    \end{tikzpicture}
+    \begin{center}
+      We go from these model files...
+    \end{center}
+
+    \onslide<2>
+    \begin{tikzpicture}[remember picture,overlay]
+      \draw[fill=white,fill opacity=0.8,draw=none]
+        (page cs:-1.0,0.78) rectangle (page cs:-0.345,-0.4);
+    \end{tikzpicture}
+    \begin{center}
+      ... to these NoSQL graphs.
+    \end{center}
+
+    \onslide<3>
+    \begin{tikzpicture}[remember picture,overlay,every node/.style={draw=red,very thick},every edge/.style={draw=red,very thick,->}]
+      %\printtikzpagegrid
+      % \node[minimum width=2em,minimum height=.8em] (nbook) at (page cs:-.675,.405) {};
+      % \node[minimum width=6.5em,minimum height=.9em] (nlibrary) at (page cs:-.65,.53) {};
+      % \node[minimum width=2em,minimum height=.8em] (nauthor) at (page cs:-.515,.205) {};
+      % \node[minimum width=2em,minimum height=.8em] (nbooki) at (page cs:-.71,-.19) {};
+      % \node[minimum width=2em,minimum height=.8em] (nauthori) at (page cs:-.47,-.29) {};
+      % \node[minimum width=3em,minimum height=.8em] (nmetamodel) at (page cs:.57,.57) {};
+      % \node[minimum width=2em,minimum height=.8em] (nbookt) at (page cs:.44,.27) {};
+      % \node[minimum width=2em,minimum height=.8em] (nauthort) at (page cs:.695,.27) {};
+      % \node[minimum width=2em,minimum height=.8em] (nbooke) at (page cs:.435,.02) {};
+      % \node[minimum width=2em,minimum height=.8em] (nauthore) at (page cs:.695,.02) {};
+      % \node[minimum width=2em,minimum height=.8em] (nfile) at (page cs:.57,-.2) {};
+      % \node[minimum width=6.5em,minimum height=.8em] (nmetamodelkey) at (page cs:-.062,.485) {};
+      % \node[minimum width=6.5em,minimum height=.8em] (nfilekey) at (page cs:-.062,-.015) {};
+      % \path
+      %   (nlibrary) edge[out=0,in=180] (nmetamodel)
+      %   (nbook) edge[out=0,in=180] (nbookt)
+      %   (nauthor) edge[out=0,in=200] (nauthort);
+
+      \draw[fill=white,fill opacity=0.8,draw=none]
+        (page cs:-0.9,-.4) rectangle (page cs:-.35,.02);
+      \draw[fill=white,fill opacity=0.8,draw=none]
+        (page cs:-0.345,-.4) rectangle (page cs:0.34,0.78);
+      \draw[fill=white,fill opacity=0.8,draw=none]
+        (page cs:0.34,-.4) rectangle (page cs:0.85,0.15);
+    \end{tikzpicture}
+    \begin{itemize}
+    \item Ecore packages $\rightarrow$ metamodel nodes
+    \item Ecore classes $\rightarrow$ type nodes
+    \end{itemize}
+
+    \onslide<4>
+    \begin{tikzpicture}[remember picture,overlay]
+      \draw[fill=white,fill opacity=0.8,draw=none]
+        (page cs:-.35,.02) rectangle (page cs:-0.9,.78);
+      \draw[fill=white,fill opacity=0.8,draw=none]
+        (page cs:-0.345,-0.4) rectangle (page cs:0.34,0.78);
+      \draw[fill=white,fill opacity=0.8,draw=none]
+        (page cs:0.85,0.15) rectangle (page cs:0.34,0.78);
+    \end{tikzpicture}
+    \begin{itemize}
+    \item Physical files $\rightarrow$ file nodes
+    \item Model elements $\rightarrow$ element nodes
+    \end{itemize}
+
+    \onslide<5>
+    \begin{tikzpicture}[remember picture,overlay]
+      \draw[fill=white,fill opacity=0.8,draw=none]
+        (page cs:-.35,-.4) rectangle (page cs:-0.9,.78);
+      \draw[fill=white,fill opacity=0.8,draw=none]
+        (page cs:0.85,-.4) rectangle (page cs:0.34,0.78);
+    \end{tikzpicture}
+    \begin{itemize}
+    \item MM index: package URI $\rightarrow$ metamodel node
+    \item File index: file path $\rightarrow$ file node
+    \item Users can define custom indices by attribute/expression
+    \end{itemize}
+  \end{overprint}
+\end{frame}
+
+\begin{frame}[standout]
+  Demo time!
+
+  Let's index a Java model and find singletons.
+\end{frame}
+
+\begin{frame}[fragile]{Hawk: indexed attributes}
+  \begin{block}{Finding a type by its name}
+    \lstinputlisting[language=EOL]{listings/set0-findByName.eol}
+  \end{block}
+
+  \begin{block}{This normally involves...}
+    \begin{enumerate}
+    \item Iterating over all types
+    \item Following the ``name'' reference
+    \item Comparing the name
+    \end{enumerate}
+  \end{block}
+
+  \begin{alertblock}{Hawk can replace this with a lookup}
+    We only need to tell it to index ``SimpleName.identifier'':
+    \lstinputlisting[language=EOL]{listings/set0-findByName-indexed.eol}
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Hawk: derived attributes}
+  \begin{block}{Original query for finding singletons}
+    \lstinputlisting[language=EOL]{listings/singletons.eol}
+  \end{block}
+
+  \begin{block}{Can we do it faster?}
+    \begin{itemize}
+    \item Checking if a method is public or static requires traversing
+      references
+    \item Same goes for checking if it returns an instance of itself
+    \item In Hawk, \alert{we can precompute this}
+    \item When files change, only the affected values are recomputed
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Hawk: use of derived attributes as precomputed values}
+
+  \begin{block}{Original query}
+    \lstinputlisting[language=EOL]{listings/singletons.eol}
+  \end{block}
+
+  \begin{block}{Changed to use derived attributes on MethodDeclaration}
+    \lstinputlisting[language=EOL,firstline=13]{listings/singletons-dmethods.eol}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Hawk: derived attributes are also indexed}
+  \begin{block}{Revised query}
+    \lstinputlisting[language=EOL,firstline=13]{listings/singletons-dmethods.eol}
+  \end{block}
+
+  \begin{block}{Can we do it faster?}
+    \begin{itemize}
+    \item Right now, we need to go through \emph{all} type declarations and then
+      filter by methods
+    \item What if we go from the methods to the types instead?
+    \item In Hawk, \alert{top-level selects can replace iteration with lookups
+      when using derived attributes}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Hawk: use of derived attributes as index keys}
+
+  \begin{block}{Previous query}
+    \lstinputlisting[language=EOL,firstline=13]{listings/singletons-dmethods.eol}
+  \end{block}
+
+  \begin{block}{Revised to use index, by using derived attributes at the top level}
+    \lstinputlisting[language=EOL]{listings/singletons-dmethodsindexed.eol}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]{Hawk: flagging singletons directly}
+  \begin{block}{Previous query}
+    \lstinputlisting[language=EOL]{listings/singletons-dmethodsindexed.eol}
+  \end{block}
+
+  \begin{block}{Can we do it faster?}
+    \begin{itemize}
+    \item We could just flag types that are singletons
+    \item This derived attribute might be less reusable, however
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Hawk: final query for finding singletons}
+  \begin{block}{Previous query}
+    \lstinputlisting[language=EOL]{listings/singletons-dmethodsindexed.eol}
+  \end{block}
+
+  \begin{block}{Final query}
+    \lstinputlisting[language=EOL,firstline=12]{listings/singletons-dtypes.eol}
+  \end{block}
+\end{frame}
+
+\begin{frame}[standout]
+  Demo time!
+
+  This time, we will show how to use indexed and derived attributes.
+\end{frame}
+
+\begin{frame}[fragile]{Derived edges}
+  \begin{block}{Toy example: Person metamodel}
+    \begin{itemize}
+    \item Person metamodel, with ``parent'' references.
+    \item We want to be able to quickly find siblings, grandparents,
+      uncles/aunts, cousins, second-cousins, ancestors...
+    \item We can precompute this in Hawk with \alert{derived edges}
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Derivation logic for ``grandparent''}
+    We need a flat list and not a list of lists, so we use ``flatten'':
+    \begin{lstlisting}[language=EOL]
+      return self.parent.parent.flatten;
+    \end{lstlisting}
+  \end{block}
+
+  \begin{block}{Derivation logic for ``sibling''}
+    We can travel references in reverse with ``revRefNav\_name'':
+
+    \begin{lstlisting}[language=EOL]
+      return self.parent.revRefNav_parent.flatten.excluding(self);
+    \end{lstlisting}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}[standout]
+  Last demo for Hawk.
+
+  We will show derived edges this time.
+\end{frame}
+
+\begin{frame}{Hawk: integration into SOFTEAM Constellation~\cite{hawkmodelio_2016}}
+
+  \centering
+  \begin{columns}
+    \column{.5\textwidth}
+    \input{figures/hawkmodelio-indexingtime}
+
+    \column{.4\textwidth}
+    \input{figures/hawkmodelio-docgentime}
+  \end{columns}
+
+  \begin{itemize}
+  \item Constellation: collaboration platform over Modelio models
+  \item SOFTEAM needed search, couldn't change persistence
+  \item Integrated Hawk as a library: initial indexing cost quickly paid off
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Hawk: stress-testing remote query APIs~\cite{sosym-stress-2017}}
+
+  \begin{center}
+    \includegraphics[width=\textwidth]{rq3-comparison-tb}
+  \end{center}
+
+  \begin{itemize}
+  \item Included CDO, Hawk, Mogwaï and ranged 1--64 clients
+  \item Reverse reference navigation was crucial in having the
+    SN Train Benchmark~\cite{trainbenchmark} query run quickly
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Hawk: summing up}
+
+  \begin{block}{So far...}
+    \begin{itemize}
+    \item Hawk is good for indexing an existing collection of model files
+    \item You can efficiently answer queries from the index
+    \item Indexed/derived features can be used to speed up queries
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Ideas in the roadmap}
+    \begin{itemize}
+    \item Extensible UI: right now it's prefixed
+    % Folding Space immediately asked about horizontal scaling, interestingly
+    \item Horizontal scaling (a flock of Hawks?)
+    \item Temporal querying:
+      \begin{itemize}
+      \item When did this graph pattern match happen?
+      \item What happened before/after?
+      \end{itemize}
+    \item Web UI, based on Thrift API
+    \end{itemize}
+
+    Feedback and contributions are welcome!
+  \end{block}
+
+\end{frame}
+
+\pgfset{/metropolis/inner/sectionpage/.cd, none}
+\section{NeoEMF}
+
+\section{Mogwa\"i}
+
+\section{Wrap-up}
+
+\begin{frame}[allowframebreaks]{References}
+
+  \bibliography{../bibliography}
+  \bibliographystyle{alpha}
+
+\end{frame}
+
+\end{document}

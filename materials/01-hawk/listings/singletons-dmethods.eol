@@ -1,0 +1,17 @@
+/*
+ * Depends on these derived attributes on MethodDeclaration:
+ *
+ * - isPublic: return self.modifiers.exists(mod:Modifier|mod.public);
+ * - isStatic: return self.modifiers.exists(mod:Modifier|mod.static);
+ * - isSameReturnType:
+ *     return self.returnType.isTypeOf(SimpleType)
+ *       and self.eContainer.isTypeOf(TypeDeclaration)
+ *       and self.returnType.name.fullyQualifiedName
+ *           = self.eContainer.name.fullyQualifiedName;
+ */
+
+return TypeDeclaration.all.select(td|
+  td.bodyDeclarations.exists(md:MethodDeclaration |
+    md.isPublic = true
+    and md.isStatic = true
+    and md.isSameReturnType = true));
