@@ -55,7 +55,7 @@
 
   \begin{itemize}
   \item \url{https://github.com/mondo-project/mondo-hawk}
-  \item Open source project under the Eclipse Public License
+  \item Recently accepted as Eclipse Incubator project (moving soon!)
   \end{itemize}
 \end{frame}
 
@@ -194,6 +194,7 @@
   \end{block}
 
   \begin{alertblock}{Hawk can replace this with a lookup}
+    \vspace{.3em}
     We only need to tell it to index ``SimpleName.identifier'':
     \lstinputlisting[language=EOL]{listings/set0-findByName-indexed.eol}
   \end{alertblock}
@@ -294,6 +295,7 @@
   \end{block}
 
   \begin{block}{Derivation logic for ``grandparent''}
+    \vspace{.3em}
     We need a flat list and not a list of lists, so we use ``flatten'':
     \begin{lstlisting}[language=EOL]
       return self.parent.parent.flatten;
@@ -301,6 +303,7 @@
   \end{block}
 
   \begin{block}{Derivation logic for ``sibling''}
+    \vspace{.3em}
     We can travel references in reverse with ``revRefNav\_name'':
 
     \begin{lstlisting}[language=EOL]
@@ -348,6 +351,32 @@
 
 \end{frame}
 
+\begin{frame}[fragile]{Hawk: time-aware queries over versioned models~\cite{hawk-mrt2018}}
+
+  \begin{lstlisting}[frame=tb,language=EOL,escapechar=@,basicstyle=\footnotesize]
+var rs = RewardTableRow@\textcolor{red}{.latest}@.all.collect(row | row.getRewardShifts()).flatten();
+return Sequence { rs.min(), rs.max(), rs.average() };
+
+operation RewardTableRow getRewardShifts(): Sequence {
+  var v = self@\textcolor{red}{.versions}@;
+  if (v.size <= 1) { return Sequence {}; }
+  else { return v.subList(0, v.size - 1).collect(v | v.value - v@\textcolor{red}{.prev}@.value); }
+}
+operation Sequence average() { return self.sum() / self.size(); }
+  \end{lstlisting}
+
+  \begin{itemize}
+  \item Extended Hawk with Greycat temporal graph support and time-aware query
+    engine / updater components
+  \item Can index entire Subversion-based history of a model, and ask things
+    about its history through a new set of time-aware primitives
+  \item Above query is finding descriptive stats for reward table shifts in a
+    models@run.time system
+  \item \alert{Presenting this work at 14:00 (MRT'18) --- hope to see you there!}
+  \end{itemize}
+
+\end{frame}
+
 \begin{frame}{Hawk: summing up}
 
   \begin{block}{So far...}
@@ -360,15 +389,14 @@
 
   \begin{block}{Ideas in the roadmap}
     \begin{itemize}
-    \item Extensible UI: right now it's prefixed
+    \item Extensible UI, covering differences in options for components
     % Folding Space immediately asked about horizontal scaling, interestingly
     \item Horizontal scaling (a flock of Hawks?)
-    \item Temporal querying:
-      \begin{itemize}
-      \item When did this graph pattern match happen?
-      \item What happened before/after?
-      \end{itemize}
-    \item Web UI, based on Thrift API
+    \item Web UI based on Thrift API
+    \item More backends! (Triple stores? Neo4j 3.x? MapDB?)
+    \item Better Git connector (JGit-based)
+    \item Extending EOL with Linear Temporal Logic
+    \item Visualizations based on time-aware queries
     \end{itemize}
 
     Feedback and contributions are welcome!
