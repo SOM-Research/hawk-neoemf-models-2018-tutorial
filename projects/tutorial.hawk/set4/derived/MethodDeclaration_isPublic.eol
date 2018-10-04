@@ -1,0 +1,1 @@
+return self.modifiers.exists(mod:Modifier|mod.public);

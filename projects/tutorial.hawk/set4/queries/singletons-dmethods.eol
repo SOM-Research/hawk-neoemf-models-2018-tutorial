@@ -1,0 +1,13 @@
+/*
+ * Depends on these derived attributes on MethodDeclaration:
+ *
+ * - MethodDeclaration_isPublic
+ * - MethodDeclaration_isStatic
+ * - MethodDeclaration_isSameReturnType
+ */
+
+return TypeDeclaration.all.select(td|
+  td.bodyDeclarations.exists(md:MethodDeclaration |
+    md.isPublic = true
+    and md.isStatic = true
+    and md.isSameReturnType = true));

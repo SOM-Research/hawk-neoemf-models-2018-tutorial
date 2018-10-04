@@ -1,0 +1,2 @@
+return TypeDeclaration.all.selectOne(td |
+  td.name.identifier = 'IdeInputFileObject');

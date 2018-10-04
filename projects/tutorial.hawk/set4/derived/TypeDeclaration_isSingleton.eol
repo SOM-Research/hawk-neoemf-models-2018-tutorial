@@ -1,0 +1,6 @@
+return self.bodyDeclarations.exists(md:MethodDeclaration |
+   md.modifiers.exists(mod:Modifier | mod.public) and
+   md.modifiers.exists(mod:Modifier | mod.static) and
+   md.returnType.isTypeOf(SimpleType) and
+   md.returnType.name.fullyQualifiedName = self.name.fullyQualifiedName
+);
