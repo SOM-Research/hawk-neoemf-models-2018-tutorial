@@ -1,0 +1,4 @@
+return self.returnType.isTypeOf(SimpleType)
+  and self.eContainer.isTypeOf(TypeDeclaration)
+  and self.returnType.name.fullyQualifiedName
+    = self.eContainer.name.fullyQualifiedName;

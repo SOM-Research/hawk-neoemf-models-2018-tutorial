@@ -1,0 +1,5 @@
+/*
+ * Depends on TypeDeclaratioin_isSingleton
+ */
+
+return TypeDeclaration.all.select(td | td.isSingleton = true);
