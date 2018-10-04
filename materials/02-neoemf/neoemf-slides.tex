@@ -11,10 +11,45 @@
 \pgfset{/metropolis/inner/sectionpage/.cd, progressbar}
 \section{NeoEMF}
 
+\begin{frame}[c]\frametitle{NeoEMF: overview}
+	\begin{itemize}
+	\item Handle large models with task-specific databases
+	\item Lazy-loading
+	\item Compliant with the EMF API
+	\begin{itemize}
+		\item Easy to integrate in existing applications
+		\item EMF-Compatible code generation
+	\end{itemize}
+	\item Advanced caching (\& prefetching strategies)
+	\item Efficient XMI importer
+	\end{itemize}
+\end{frame}
+
 \begin{frame}[t]\frametitle{NeoEMF: Architecture}
   \begin{center}
     \includegraphics[width=\textwidth]{neoemf-architecture.png}
   \end{center}
+\end{frame}
+
+\begin{frame}[c]\frametitle{NeoEMF: datastores~\cite{DBLP:conf/models/DanielSBTVGC16}}
+	\begin{itemize}
+	\item \textbf{NeoEMF/Graph}
+		\begin{itemize}
+		\item Efficient model traversal using rich query language
+		\item Mogwaï framework (OCL to Gremlin translation)
+		\end{itemize}
+	\item \textbf{NeoEMF/Map}
+		\begin{itemize}
+		\item Fast access to atomic operations
+		\item Designed for EMF-API calls
+		\end{itemize}
+	\item \textbf{NeoEMF/Column}
+		\begin{itemize}
+		\item Transparent model distribution
+		\item Concurrent read/write
+		\item Distributed model transformations (ATL-MR)
+		\end{itemize}
+	\end{itemize}
 \end{frame}
 
 \begin{frame}[t]\frametitle{NeoEMF: project website}
@@ -28,140 +63,129 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}[c]\frametitle{NeoEMF Datastores~\cite{DBLP:conf/models/DanielSBTVGC16}}
-	\begin{itemize}
-	\item NeoEMF/Graph
-		\begin{itemize}
-		\item Efficient model traversal using rich query language
-		\item Mogwaï framework (OCL to Gremlin translation)
-		\end{itemize}
-	\item NeoEMF/Map
-		\begin{itemize}
-		\item Fast access to atomic operations
-		\item Designed for EMF-API calls
-		\end{itemize}
-	\item NeoEMF/Column
-		\begin{itemize}
-		\item Transparent model distribution
-		\item Concurrent read/write
-		\item Distributed model transformations (ATL-MR)
-		\end{itemize}
-	\end{itemize}
-\end{frame}
-
-\begin{frame}[c]\frametitle{NeoEMF Key Features}
-	\begin{itemize}
-	\item Lazy-loading
-	\item Compliant with EMF API
-	\item Easy to integrate in existing applications
-	\item EMF-Compatible code generation
-	\item Advanced caching (+ prefetching) strategies
-	\item Efficient XMI importer
-	\end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]\frametitle{Initialise a New Resource}
+\begin{frame}[fragile]\frametitle{NeoEMF: initialise a new resource}
 	\begin{enumerate}
+	\item Register the Persistence Backend Factory.
+	\item Create a ResourceSet and register the PersistentResourceFactory
 	\item Create a new URI to locate a file-based resource.
 	\item Create the resource.
 	\end{enumerate}
 	
   \begin{java}
-    URI uri = MyUriBuilder.builder().fromFile(new File("<db_path>"));
-
-    ResourceSet resourceSet = new ResourceSetImpl();
-    Resource resource = resourceSet.createResource(uri);
+PersistenceBackendFactoryRegistry.register(
+			BlueprintsURI.SCHEME,
+			BlueprintsPersistenceBackendFactory.getInstance());  
+  
+ResourceSet resourceSet = new ResourceSetImpl();
+resourceSet.getResourceFactoryRegistry().getProtocolToFactoryMap()
+			.put(BlueprintsURI.SCHEME,
+					PersistentResourceFactory.getInstance());
+						
+URI uri = BlueprintsURI.createFileURI(new File("<db_path>"));
+						
+Resource resource = resourceSet.createResource(uri);
+    
+// EMF resource stored in an in-memory Blueprints graph
   \end{java}
 \end{frame}
 
-\begin{frame}[fragile]\frametitle{Save/Load Resource}
+\begin{frame}[fragile]\frametitle{NeoEMF: persist a resource}
 	
 	\begin{enumerate}
-	\item Create a new configuration builder.
-	\item Save and unload resource.
+	\item Create a new option builder (backend-specific).
+	\item Save the resource.
+	\item Manipulate the resource by accessing the local database
 	\end{enumerate}
   \begin{java}
-    ImmutableConfig config = MyConfig.newConfig()
-    .autoSave(50000)              
-    .log()                        
-    .withOption("key", "value");  
+Map<String, Object> options = BlueprintsNeo4jOptionsBuilder.newBuilder()
+		.weakCache().autocommit().cacheSizes()
 
-    resource.load(config.asMap()); 
-
-    // Do something on the resource
-
-    resource.save(config.asMap()); 
-    resource.unload();
+resource.save(options);
+// Resource saved in a local Neo4j database
+resource.getContents() 
+// [...]
   \end{java}
 	
 \end{frame}
 
-\begin{frame}[fragile]\frametitle{Modify existing resource}
+\begin{frame}[fragile]\frametitle{NeoEMF: modify an existing resource}
 	\begin{enumerate}
-	\item Load resource.
-	\item Modify contents.
-	\item Save resource. 
+	\item Load resource using the same option builder.
+	\item Navigate its content and perform update operations
+	\item Save the resource (automatically done with \emph{autocommit} option)
 	\end{enumerate}
 	
   \begin{java}
-    ImmutableConfig config = MyConfig.newConfig()
-    .cacheContainers()
-    .cacheMetaclasses();
+Map<String, Object> options = BlueprintsNeo4jOptionsBuilder.newBuilder()
+		.weakCache().autocommit().cacheSizes()
 
-    URI uri = MyUriBuilder.builder().fromFile(new File("db_path"));
+URI uri = BlueprintsURI.createFileURI(new File("<db_path>"));
 
-    Resource resource = new ResourceSetImpl().createResource(uri);
-    resource.load(config.asMap());
+resourceSet.createResource(uri)
+resource.load(options);
 
-    MyClass myClass = (MyClass) resource.getContents().get(0);
-    myClass.setName("NewName");
+// Model manipulation operation (complete EMF API support)
+MyClass myClass = (MyClass) resource.getContents().get(0);
+myClass.setName("NewName");
 
-    resource.save(config.asMap());
-    resource.unload();
+// Save the modification in the local Neo4j database
+resource.save(config.asMap());
   \end{java}
 \end{frame}
 
 \begin{frame}[standout]
   Demo time!
 
-  Let's import a Java model, save it in Neo4j and query the database.
-\end{frame}
-
-\begin{frame}[c]\frametitle{Discussion}
-	\begin{itemize}
-	\item Graph databases outperform relational ones for several navigation steps queries.
-	\item But model loading operations only use 2 or 3 steps queries.
-	\item If the use of the EMF API is the only concern, then a relational (or column) database storing BLOBs are a better solution.
-	\item Impossible to compare with bigger models.
-	\end{itemize}
-\end{frame}
-
-\begin{frame}[c]\frametitle{Discussion}
-  \begin{center}
-    \includegraphics[width=\textwidth]{neoemf-discussion.png}
-  \end{center}
-	\begin{itemize}
-	\item Low-level model handling APIs
-	\item Fragmented queries on the database
-	\item Many intermediate objects
-	\end{itemize}
+  Let's import a Java model, save it in Neo4j and MapDB, and query the database.
 \end{frame}
 
 \section{Mogwa\"i}
 
-\begin{frame}[c]\frametitle{Motivation}
+\begin{frame}[c]\frametitle{Mogwa\"i: motivation}
 	\begin{itemize}
-	\item Why don't we query directly the database?
-	\item Manually writing database-level queries is hard
-	\item Need to learn a new query language
-	\item Database expertise vs. Modeling expertise
-	\item Unknown model representation
-	\item Solution: generate them!
+		\item NeoEMF improves model scalability, but ...
 	\end{itemize}
-	
+  \begin{center}
+    \includegraphics[width=\textwidth]{emf-ocl.png}
+  \end{center}
 \end{frame}
 
-\begin{frame}[t]\frametitle{Mogwa\"i: Architecture~\cite{DBLP:conf/rcis/DanielSC16}}
+\begin{frame}[c]\frametitle{Mogwa\"i: motivation}
+	\begin{itemize}
+	\item Low-level model handling APIs
+	\begin{itemize}
+	\item Not aligned with the database capabilities
+	\end{itemize}
+	\item Fragmented queries on the database
+	\begin{itemize}
+	\item Not efficient
+	\item Remote databases
+	\end{itemize}
+	\item Intermediate object reification
+	\begin{itemize}
+	\item Memory consumption
+	\item Execution time overhead
+	\end{itemize}	
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[c]\frametitle{Mogwa\"i: motivation}
+\begin{itemize}
+	\item Database queries are efficient but
+	\begin{itemize}
+		\item Modern persistence frameworks typically rely on NoSQL databases
+		\begin{itemize}
+		\item Multiple query languages
+		\item Multiple data representations
+		\item Low-level queries are hard to understand and maintain
+		\item Modeling expertise vs. Database expertise
+		\end{itemize}
+	\end{itemize}
+	\item Solution: generate them!
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[t]\frametitle{Mogwa\"i: architecture~\cite{DBLP:conf/rcis/DanielSC16}}
   \begin{center}
     \includegraphics[width=\textwidth]{mogwai-architecture.png}
   \end{center}
@@ -169,8 +193,45 @@
 	\item Generate graph database queries from OCL expressions
 	\item Bypass modelling framework API
 	\item Single execution of the query
+	\item "Compatible" with EMF
 	\end{itemize}
-	
+\end{frame}
+
+\begin{frame}[c]\frametitle{Mogwa\"i: under the hoods}
+	\begin{itemize}
+	\item Gremlin metamodel (around 100 classes)
+	\item ATL Transformation
+	\begin{itemize}
+		\item OCL-to-Gremlin mapping
+		\item Query composition
+		\item 70 rules and helpers
+	\end{itemize}
+	\item Customized Gremlin engine
+	\item Model element reification mechanism
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[c]\frametitle{Mogwa\"i: load and execute an OCL query}
+
+\end{frame}
+
+\begin{frame}[c]\frametitle{Mogwa\"i: manipulate query results}
+
+\end{frame}
+
+\begin{frame}[c]\frametitle{Mogwa\"i: new features}
+\begin{itemize}
+	\item ModelDatastore abstraction
+		\begin{itemize}
+		\item Support for different data stores
+		\item Easily extensible
+		\item Generic queries
+		\end{itemize}
+	\item Prototype support for model transformations (Gremlin-ATL~\cite{})
+	\item Data migration operations
+	\item Large model validation (presenting this work at 15:00 at OCL'18)
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}[c]\frametitle{Mogwa\"i: project website}
@@ -184,155 +245,20 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]\frametitle{Queries are expressed in OCL}
-	
-	\begin{columns}
-		\begin{column}{0.5\textwidth}
-	    \begin{figure}[htbp]
-		    \centering
-			  \includegraphics[width=\textwidth]{mogwai-model.png}
-		    \caption{Simple Model}
-	    \end{figure}
-	    \begin{figure}[htbp]
-		    \centering
-			  \includegraphics[width=\textwidth]{mogwai-instances.png}
-		    \caption{Model Instances}
-	    \end{figure}		
-		\end{column}
-		\begin{column}{0.5\textwidth}
-		  \begin{ocl}
-        Package.allInstances()  -- returns p1
-        p1.contents				-- returns [c1,c2]
-        p1.contents->select(e | e.name = 'c1') 
-		    -- returns c1
-		  \end{ocl}
-		\end{column}
-	\end{columns}
-\end{frame}
-
-\begin{frame}[c]\frametitle{Model Persistence}
-	\begin{figure}[htbp]
-		\centering
-		\includegraphics[width=.6\linewidth]{mogwai-graph.png}
-		\caption{Model Instances Stored in Neo4j}
-	\end{figure}
-\end{frame}
-
-\begin{frame}[fragile]\frametitle{Database Queries are expressed in Gremlins}
-	\begin{itemize}
-	\item Graph traversal DSL
-	\item Composed of processing steps
-	\item Generic query language for graph databases
-	\end{itemize}
-	\begin{columns}
-		\begin{column}{0.4\textwidth}
-			\includegraphics[width=\linewidth]{mogwai-graph.png}
-		\end{column}
-		\begin{column}{0.6\textwidth}
-      \begin{lstlisting}[language=gremlin]
-        g.idx(''metaclasses'')[[name:''Package'']]
-        .inE(''instanceOf'').outV // v(1)
-        g.v(3).outE(''contents'').inV // [v(4),v(5)]
-        g.v(3).outE(''contents'').inV
-        .filter{it.name = ''c1''} // v(4)
-      \end{lstlisting}
-		\end{column}
-	\end{columns}
-	
-\end{frame}
-
-\begin{frame}[c]\frametitle{OCL Queries into Gremlin Traversals Translation}
-	\begin{itemize}
-	\item Map OCL expressions to Gremlin steps
-	\item Merge created steps into a (several) traversal(s)]
-	\end{itemize}
-  \begin{center}
-    \includegraphics[width=\textwidth]{mogwai-architecture.png}
-  \end{center}	
-\end{frame}
-
-\begin{frame}[c]\frametitle{OCL Expressions to Gremlin Steps Mapping}
-	\begin{columns}
-		\begin{column}{0.5\textwidth}
-      \begin{center}
-        \includegraphics[width=\textwidth]{mogwai-graph.png}
-      \end{center}			
-		\end{column}
-		\begin{column}{0.5\textwidth}
-      \begin{center}
-        \includegraphics[width=\textwidth]{mogwai-mapping.png}
-      \end{center}			
-		\end{column}
-	\end{columns}
-\end{frame}
-
-\begin{frame}[c]\frametitle{Merge created steps into a traversal}
-  \begin{center}
-    \includegraphics[width=\textwidth]{mogwai-transformation.png}
-  \end{center}
-\end{frame}
-
-\begin{frame}[c]\frametitle{OCL Transformation Example}
-  \begin{center}
-    \includegraphics[width=\textwidth]{mogwai-ocl-transformation.png}
-  \end{center}	
-\end{frame}
-
-\begin{frame}[c]\frametitle{Query generation and execution}
-	
-	\begin{itemize}
-	\item Delegates query computation to the database
-	\item Returns graph elements to the persistence layer
-	\end{itemize}
-	
-  \begin{center}
-    \includegraphics[width=\textwidth]{mogwai-architecture.png}
-  \end{center}
-	
-\end{frame}
-
-\begin{frame}[standout]
-  Demo time!
-
-  Let's query a Java model and find singletons.
-\end{frame}
-
-\begin{frame}[c]\frametitle{Benchmark Results}
-
-  \begin{itemize}
-	\item Model containing 2 million elements
-	\item Up to 20 times faster than other query approaches
-	\item Consume up to 75 times less memory
-  \end{itemize}
-  \begin{columns}
-	  \begin{column}{0.5\textwidth}
-	    \begin{center}
-	      \includegraphics[width=\textwidth]{mogwai-benchmark-cpu.png}
-	    \end{center}
-	  \end{column}
-	  \begin{column}{0.5\textwidth}
-	    \begin{center}
-	      \includegraphics[width=\textwidth]{mogwai-benchmark-memory.png}
-	    \end{center}
-	  \end{column}
-  \end{columns}
-
-\end{frame}
-
-\begin{frame}[c]\frametitle{Conclusion}
-	\begin{block}{Model Persistence Frameworks}
+\begin{frame}[c]\frametitle{NeoEMF \& Mogwa\"i: summing up}
+	\begin{block}{NeoEMF}
 	  \begin{itemize}
-		\item Not designed to compute model queries efficiently
-		\item Writing manually database-level queries is hard
+		\item Select the NoSQL database adapted to a modeling scenario
+		\item Transparent EMF integration
+		\item On-demand loading
 	  \end{itemize}
 	\end{block}
 
-  \begin{block}{Mogwaï}
+  \begin{block}{Mogwa\"i}
 		\begin{itemize}
+		\item Benefit from the capabilities of NeoEMF/Graph backend
 		\item Translates OCL queries into Gremlin traversals
-		\item Positive results
-		\item Not adapted to small models
-		\item Needs to be integrated
+		\item Bypasses low-level modeling APIs
 	  \end{itemize}
   \end{block}
 \end{frame}
