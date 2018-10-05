@@ -1,0 +1,5 @@
+return Person.all.selectOne(p|p.firstName='Jill').siblings.collect(p|p.fullName());
+
+operation Person fullName(): String {
+  return self.firstName + ' ' + self.lastName;
+}

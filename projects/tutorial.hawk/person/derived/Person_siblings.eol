@@ -1,0 +1,3 @@
+return self.parents
+  .revRefNav_parents
+  .flatten.asSet().excluding(self);

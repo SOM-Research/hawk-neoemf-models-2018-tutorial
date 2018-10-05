@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ASCII"?>
+<p:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:p="http://eclipse.org/hawk/person" xmi:id="_mC9RsMgQEeiUdPx-Sxenlg">
+  <people xmi:id="_muNOIMgQEeiUdPx-Sxenlg" firstName="John" lastName="Doe"/>
+  <people xmi:id="_p4FwMMgQEeiUdPx-Sxenlg" firstName="Jane" lastName="Doe"/>
+  <people xmi:id="_bJEaMMgUEeiaKbCAjXRGEA" firstName="Bob" lastName="Doe" parents="_p4FwMMgQEeiUdPx-Sxenlg _muNOIMgQEeiUdPx-Sxenlg"/>
+  <people xmi:id="_elT3kMgUEeiaKbCAjXRGEA" firstName="Sally" lastName="Morton"/>
+  <people xmi:id="_hBuPoMgUEeiaKbCAjXRGEA" firstName="Robert" lastName="Morton"/>
+  <people xmi:id="_kT-DgMgUEeiaKbCAjXRGEA" firstName="Penny" lastName="Doe" parents="_hBuPoMgUEeiaKbCAjXRGEA _elT3kMgUEeiaKbCAjXRGEA"/>
+  <people xmi:id="_l5hsEMgUEeiaKbCAjXRGEA" firstName="Jack" lastName="Doe" parents="_bJEaMMgUEeiaKbCAjXRGEA _kT-DgMgUEeiaKbCAjXRGEA"/>
+  <people xmi:id="_nSo0EMgUEeiaKbCAjXRGEA" firstName="Jill" lastName="Doe" parents="_bJEaMMgUEeiaKbCAjXRGEA _kT-DgMgUEeiaKbCAjXRGEA"/>
+</p:Model>

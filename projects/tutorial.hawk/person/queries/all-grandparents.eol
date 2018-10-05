@@ -1,0 +1,10 @@
+return Person.all
+  .collect(p | Sequence {
+    p.fullName(), p.grandparents.collect(gp|gp.fullName())
+  })
+  .select(p | p.second.size > 0)
+  .asSequence();
+
+operation Person fullName(): String {
+  return self.firstName + ' ' + self.lastName;
+}
