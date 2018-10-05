@@ -287,27 +287,27 @@
 \begin{frame}[fragile]{Derived edges}
   \begin{block}{Toy example: Person metamodel}
     \begin{itemize}
-    \item Person metamodel, with ``parent'' references.
+    \item Person metamodel, with ``parents'' references.
     \item We want to be able to quickly find siblings, grandparents,
       uncles/aunts, cousins, second-cousins, ancestors...
     \item We can precompute this in Hawk with \alert{derived edges}
     \end{itemize}
   \end{block}
 
-  \begin{block}{Derivation logic for ``grandparent''}
+  \begin{block}{Derivation logic for ``grandparents''}
     \vspace{.3em}
     We need a flat list and not a list of lists, so we use ``flatten'':
     \begin{lstlisting}[language=EOL]
-      return self.parent.parent.flatten;
+      return self.parents.parents.flatten;
     \end{lstlisting}
   \end{block}
 
-  \begin{block}{Derivation logic for ``sibling''}
+  \begin{block}{Derivation logic for ``siblings''}
     \vspace{.3em}
     We can travel references in reverse with ``revRefNav\_name'':
 
     \begin{lstlisting}[language=EOL]
-      return self.parent.revRefNav_parent.flatten.excluding(self);
+      return self.parents.revRefNav_parents.flatten.excluding(self);
     \end{lstlisting}
   \end{block}
 

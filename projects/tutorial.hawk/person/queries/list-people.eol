@@ -1,0 +1,5 @@
+return Person.all.collect(p | p.fullName()).asSequence();
+
+operation Person fullName(): String {
+  return self.firstName + ' ' + self.lastName;
+}
