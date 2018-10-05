@@ -211,12 +211,72 @@ resource.save(config.asMap());
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[c]\frametitle{Mogwa\"i: load and execute an OCL query}
+\begin{frame}[fragile]\frametitle{Mogwa\"i: load a Mogwa\"i resource}
+\begin{enumerate}
+	\item Register the BlueprintsPersistenceBackendFactory.
+	\item Create a ResourceSet and register the PersistentResourceFactory
+	\item Create a new MogwaiURI to locate a file-based resource.
+	\item Create and cast the resource.
+	\item Use the Mogwa\"i API
+	\end{enumerate}
+	
+  \begin{java}
+PersistenceBackendFactoryRegistry.register(
+	MogwaiURI.MOGWAI_SCHEME, BlueprintsPersistenceBackendFactory.getInstance());
+		
+ResourceSet resourceSet = new ResourceSetImpl();
+resourceSet.getResourceFactoryRegistry().getProtocolToFactoryMap()
+	.put(MogwaiURI.MOGWAI_SCHEME, MogwaiResourceFactory.getInstance());
+		
+URI uri = MogwaiURI.createMogwaiURI(new File("<db_path>"));
 
+MogwaiResource resource = (MogwaiResource) resourceSet.createResource(uri);
+resource.load(Collections.emptyMap());
+
+// Use EMF Resource with enhanced querying API
+resource.query([...]);  
+  \end{java}
 \end{frame}
 
-\begin{frame}[c]\frametitle{Mogwa\"i: manipulate query results}
+\begin{frame}[fragile]\frametitle{Mogwa\"i: load and execute an OCL query}
+\begin{enumerate}
+\item Create a MogwaiQuery
+\item Query the resource and get a QueryResult
+\item Retrieve the database results, execution time, executed query \ldots
+\end{enumerate}
+\begin{java}
+MogwaiQuery query = OCLQueryBuilder.newBuilder()
+	.fromURI(URI.createURI("ocl/singletonMethods.ocl"))
+	.build();
+	
+QueryResult result = resource.query(MogwaiQuery);
+result.isSingleResult(); // returns only one element?
+result.resultSize(); // number of results
+result.getExecutedQuery(); // get the executed database query
+result.getComputationTime(); // time to compute the query
+result.getResults(); // Collection<Object> of database results
+\end{java}
+\end{frame}
 
+\begin{frame}[fragile]\frametitle{Mogwa\"i: manipulate query results}
+\begin{enumerate}
+\item Get a NeoEMFQueryResult
+\item Reify the results (if possible\footnote{Primitive types cannot be reified})
+\item Navigate your model elements using the standard EMF API
+\end{enumerate}
+\begin{java}
+MogwaiQuery query = OCLQueryBuilder.newBuilder()
+	.fromURI(URI.createURI("ocl/singletonMethods.ocl"))
+	.build();
+	
+NeoEMFQueryResult result = resource.query(MogwaiQuery);
+if(result.isReifiable()) {
+	List<EObject> eObjects = result.reifyResults();
+	for(EObject e : eObjects) {
+		System.out.println(((MethodDeclaration)e).getName());
+	}
+}
+\end{java}
 \end{frame}
 
 \begin{frame}[c]\frametitle{Mogwa\"i: new features}
@@ -227,7 +287,7 @@ resource.save(config.asMap());
 		\item Easily extensible
 		\item Generic queries
 		\end{itemize}
-	\item Prototype support for model transformations (Gremlin-ATL~\cite{})
+	\item Prototype support for model transformations (Gremlin-ATL~\cite{daniel2017gremlin})
 	\item Data migration operations
 	\item Large model validation (presenting this work at 15:00 at OCL'18)
 \end{itemize}
