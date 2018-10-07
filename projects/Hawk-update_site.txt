@@ -1,1 +1,7 @@
+Non-GPL content (all except Neo4j):
+
 http://mondo-project.github.io/mondo-hawk/updates/
+
+GPL content (Neo4j backend):
+
+https://dl.bintray.com/bluezio/generic/1.2.0-20181007/

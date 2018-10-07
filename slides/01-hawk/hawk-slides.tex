@@ -48,7 +48,7 @@
   \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{Hawk: deployment}
+\begin{frame}{Deployment}
 
   \begin{center}
     \includegraphics[width=\textwidth]{hawk-deployment}
@@ -65,7 +65,7 @@
 
 \end{frame}
 
-\begin{frame}{Hawk: component-based architecture}
+\begin{frame}{Component-based architecture}
   \begin{center}
     \includegraphics[width=.6\textwidth]{hawk-architecture}
   \end{center}
@@ -79,7 +79,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Hawk: example for a library model}
+\begin{frame}{Example for a library model}
   \centering
   \includegraphics[width=\textwidth]{hawk-library-cropped}
   \begin{overprint}
@@ -164,13 +164,124 @@
 \end{frame}
 
 \begin{frame}[standout]
-  Demo time!
+  Hands-on time!
 
   Let's index a Java model and find singletons.
 \end{frame}
 
-\begin{frame}[fragile]{Hawk: indexed attributes}
-  \begin{block}{Finding a type by its name}
+\newcommand{\screenshot}[3]{
+  \begin{frame}{#1}
+    \begin{center}
+      \includegraphics[width=\textwidth, height=.7\textheight, keepaspectratio]{#2}
+
+      #3
+    \end{center}
+  \end{frame}
+}
+
+\screenshot{Preparing the workspace}{00-workspace}{
+  Open Eclipse and import \file{tutorial.common} and \file{tutorial.hawk}.
+}
+
+\screenshot{Opening the main Hawk view}{01-open-view}{}
+
+\screenshot{Adding a new Hawk index}{02-add}{
+  Click on the ``Add'' button. We can keep as many different indices as we want
+  within the same Eclipse installation.
+}
+
+\screenshot{Options, options!}{03-add-dialog}{
+  There are many options here: we can use a local or a remote Hawk, we can
+  choose the backend, and we can enable/disable plugins at will.
+}
+
+\screenshot{Options for the JDTAST models}{04-add-dialog-filled}{
+  We will go with a local, Neo4j-based, EMF-focused index.
+}
+
+\screenshot{Index created}{05-created}{
+  We have created an empty index. Time to configure it.
+}
+
+\screenshot{Configuring the index}{06-configure-button}{
+  Let's click on the ``Configure'' button. This will open a new dialog.
+}
+
+\screenshot{Configure dialog}{06-configure-dialog}{
+  The dialog is divided into tabs for managing metamodels, locations to index,
+  and indexed/derived properties.
+}
+
+\screenshot{Adding metamodels}{07-add-mm-workspace}{
+  Click on ``Add from workspace'' and select the Ecore, XMLTypes and
+  JDTAST metamodels. These will be turned into Neo4j nodes and edges.
+}
+
+\screenshot{Added metamodels}{08-added-mm}{
+  The metamodels have been registered: we can index models now.
+}
+
+\screenshot{Add locations}{09-add-locations}{
+  Go to the ``Indexed Locations'' tab and click on ``Add''.
+}
+
+\screenshot{Adding a local folder}{10-localfolder}{
+  We want to index the ``LocalFolder'' in the \file{tutorial.common/models/set1} folder.
+}
+
+\screenshot{Added local folder}{11-added-folder}{
+  Wait a bit, watching the ``Status'' column, and the models will be indexed.
+  Once it's done, the index is ready to be queried.
+}
+
+\screenshot{Query button}{12-query-button}{
+  Click on the ``Query'' button.
+}
+
+\screenshot{Query dialog: main tab}{13-query-dialog}{
+  The ``Query'' dialog is quite involved: let's go bit by bit.
+
+  The main page allows us to enter the query by hand, from a file or from the
+  current editor, run/stop/reset it, and request manual syncs.
+}
+
+\screenshot{Query dialog: path-based scope}{14-path-scope}{
+  We could optionally limit the scope of the query to specific repositories and/or files.
+  This can be useful when querying large collections of models.
+
+  Patterns are essentially glob-style: e.g. \file{folder/f*.xmi}.
+}
+
+\screenshot{Query dialog: subtree-based scope}{15-subtree-scope}{
+  Another option is to limit scope to the objects contained within a certain top-level
+  file. This can be useful when querying hierarchically fragmented models (e.g. those
+  created with EMF-Splitter by Antonio Garmendia).
+}
+
+\screenshot{Query dialog: default namespaces}{16-default-ns}{
+  In some cases, ``Type.all'' might be ambiguous as we may have multiple types
+  with the same unqualified name. Here we can specify which metamodel URIs should
+  take precedence.
+}
+
+\screenshot{Query dialog: traversal scoping}{17-traversal-scoping}{
+  When following references from an object, we may want to ignore the ones that leave
+  the path-/subtree-based scope that we defined before.
+}
+
+\screenshot{Query dialog: entering a query}{18-query-entered}{
+  Let's go back to the main tab and enter a simple query about the number of instances
+  of a class. Click on ``Run Query'', which will temporarily change to ``Stop Query''.
+}
+
+\screenshot{Query dialog: query executed}{19-query-executed}{
+  The query finished running, and here we have the results.
+
+  Now that we know the basic use of Hawk, let's move to the more advanced features.
+}
+
+\begin{frame}[fragile]{Indexed attributes}
+  \begin{block}{Finding a type by its name (\file{findByName.eol})}
     \lstinputlisting[language=EOL]{listings/set0-findByName.eol}
   \end{block}
 
@@ -182,15 +293,25 @@
     \end{enumerate}
   \end{block}
 
-  \begin{alertblock}{Hawk can replace this with a lookup}
+  \begin{alertblock}{Replace with a lookup (\file{findByName-indexed.eol})}
     \vspace{.3em}
     We only need to tell it to index ``SimpleName.identifier'':
     \lstinputlisting[language=EOL]{listings/set0-findByName-indexed.eol}
   \end{alertblock}
 \end{frame}
 
-\begin{frame}[fragile]{Hawk: derived attributes}
-  \begin{block}{Original query for finding singletons}
+\screenshot{Indexed attributes tab}{22-iattr-tab}{
+  Go back to the ``Configure'' tab and select the ``Indexed Attributes''
+  tab. Click on ``Add'', and a new dialog should pop up.
+}
+
+\screenshot{Options for the indexed attribute}{23-iattr-dialog}{
+  Use the combo boxes to pick the metamodel, type and attribute
+  shown above. Click on ``Add''.
+}
+
+\begin{frame}[fragile]{Derived attributes}
+  \begin{block}{Original query for finding singletons (\file{singletons.eol})}
     \lstinputlisting[language=EOL]{listings/singletons.eol}
   \end{block}
 
@@ -205,19 +326,28 @@
   \end{block}
 \end{frame}
 
-\begin{frame}[fragile]{Hawk: use of derived attributes as precomputed values}
+\begin{frame}[fragile]{Use of derived attributes as precomputed values}
 
-  \begin{block}{Original query}
+  \begin{block}{Original query (\file{singletons.eol})}
     \lstinputlisting[language=EOL]{listings/singletons.eol}
   \end{block}
 
-  \begin{block}{Changed to use derived attributes on MethodDeclaration}
+  \begin{block}{Changed for MethodDeclaration derived attributes (\file{singletons-dmethods.eol})}
     \lstinputlisting[language=EOL,firstline=13]{listings/singletons-dmethods.eol}
   \end{block}
 \end{frame}
 
-\begin{frame}{Hawk: derived attributes are also indexed}
-  \begin{block}{Revised query}
+\screenshot{Derived attributes tab}{25-dattr-tb}{
+  Now we move to the ``Derived Attributes'' tab of the configure dialog.
+}
+
+\screenshot{Options for one of the derived attributes}{26-dattr-dialog}{
+  For the first derived attribute, fill in the form as above. You can load the
+  EOL code straight from the workspace --- no need to copy and paste!
+}
+
+\begin{frame}{Derived attributes are also indexed}
+  \begin{block}{Revised query (\file{singletons-dmethods.eol})}
     \lstinputlisting[language=EOL,firstline=13]{listings/singletons-dmethods.eol}
   \end{block}
 
@@ -232,20 +362,20 @@
   \end{block}
 \end{frame}
 
-\begin{frame}{Hawk: use of derived attributes as index keys}
+\begin{frame}{Use of derived attributes as index keys}
 
-  \begin{block}{Previous query}
+  \begin{block}{Previous query (\file{singletons-dmethods.eol})}
     \lstinputlisting[language=EOL,firstline=13]{listings/singletons-dmethods.eol}
   \end{block}
 
-  \begin{block}{Revised to use index, by using derived attributes at the top level}
+  \begin{block}{Revised to use index, with derived attrs. at top level (\file{singletons-dmethodsindexed.eol})}
     \lstinputlisting[language=EOL]{listings/singletons-dmethodsindexed.eol}
   \end{block}
 
 \end{frame}
 
-\begin{frame}[fragile]{Hawk: flagging singletons directly}
-  \begin{block}{Previous query}
+\begin{frame}[fragile]{Flagging singletons directly}
+  \begin{block}{Previous query (\file{singletons-dmethodsindexed.eol})}
     \lstinputlisting[language=EOL]{listings/singletons-dmethodsindexed.eol}
   \end{block}
 
@@ -257,18 +387,18 @@
   \end{block}
 \end{frame}
 
-\begin{frame}[fragile]{Hawk: final query for finding singletons}
-  \begin{block}{Previous query}
+\begin{frame}[fragile]{Final query for finding singletons}
+  \begin{block}{Previous query (\file{singletons-dmethodsindexed.eol})}
     \lstinputlisting[language=EOL]{listings/singletons-dmethodsindexed.eol}
   \end{block}
 
-  \begin{block}{Final query}
+  \begin{block}{Final query (\file{singletons-dtypes.eol})}
     \lstinputlisting[language=EOL,firstline=12]{listings/singletons-dtypes.eol}
   \end{block}
 \end{frame}
 
 \begin{frame}[standout]
-  Demo time!
+  Hands-on time!
 
   This time, we will show how to use indexed and derived attributes.
 \end{frame}
@@ -283,7 +413,7 @@
     \end{itemize}
   \end{block}
 
-  \begin{block}{Derivation logic for ``grandparents''}
+  \begin{block}{Derivation logic for ``grandparents'' (\file{Person\_grandparents.eol})}
     \vspace{.3em}
     We need a flat list and not a list of lists, so we use ``flatten'':
     \begin{lstlisting}[language=EOL]
@@ -291,7 +421,7 @@
     \end{lstlisting}
   \end{block}
 
-  \begin{block}{Derivation logic for ``siblings''}
+  \begin{block}{Derivation logic for ``siblings'' (\file{Person\_siblings.eol})}
     \vspace{.3em}
     We can travel references in reverse with ``revRefNav\_name'':
 
@@ -303,7 +433,7 @@
 \end{frame}
 
 \begin{frame}[standout]
-  Last demo for Hawk.
+  Last hands-on slot for Hawk.
 
   We will show derived edges this time.
 \end{frame}
@@ -326,7 +456,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Hawk: stress-testing remote query APIs~\cite{sosym-stress-2017}}
+\begin{frame}{Stress-testing remote query APIs~\cite{sosym-stress-2017}}
 
   \begin{center}
     \includegraphics[width=\textwidth]{rq3-comparison-tb}
@@ -340,7 +470,7 @@
 
 \end{frame}
 
-\begin{frame}[fragile]{Hawk: time-aware queries over versioned models~\cite{hawk-mrt2018}}
+\begin{frame}[fragile]{Time-aware queries in Hawk over versioned models~\cite{hawk-mrt2018}}
 
   \begin{lstlisting}[frame=tb,language=EOL,escapechar=@,basicstyle=\footnotesize]
 var rs = RewardTableRow@\textcolor{red}{.latest}@.all.collect(row | row.getRewardShifts()).flatten();
