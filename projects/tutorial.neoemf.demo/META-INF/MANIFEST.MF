@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Demo
+Bundle-SymbolicName: tutorial.neoemf.demo
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: tutorial.neoemf.jdtast;bundle-version="0.1.0",
+ fr.inria.atlanmod.neoemf.data.blueprints.core;bundle-version="1.0.2",
+ fr.inria.atlanmod.neoemf.data.blueprints.neo4j;bundle-version="1.0.2",
+ fr.inria.atlanmod.neoemf.data.blueprints.neo4j.wrapper;bundle-version="1.0.2",
+ fr.inria.atlanmod.neoemf.data.mapdb;bundle-version="1.0.2",
+ org.eclipse.emf.ecore.xmi;bundle-version="2.15.0"
