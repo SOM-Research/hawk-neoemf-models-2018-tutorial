@@ -1,7 +1,7 @@
 Installing NeoEMF/Mogwaï tutorial
 
 1 - Install NeoEMF update site: http://www.atlanmod.org/NeoEMF/releases/1.0.2/plugin/
-2 - Install Mogwaï update site: http://www.atlanmod.org/Mogwai/
+2 - Install Mogwaï update site: http://www.atlanmod.org/Mogwai/ (untick "Group Item b Category" if necessary)
 3 - Import hawk-neoemf-models-2018-tutorial/projects/{tutorial.common|tutorial.neoemf.jdtast|tutorial.neoemf.demo}
 4 - Unzip hawk-neoemf-models-2018/projects/tutorial.common/models/set1/set1.zip in hawk-neoemf-models-2018/projects/tutorial.common/models/set1/set1.xmi
 5 - Run tutorial.neoemf.demo/tutorial.neoemf.demo.importer.StandardGraphImporter
