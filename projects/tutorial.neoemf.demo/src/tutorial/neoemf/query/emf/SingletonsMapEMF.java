@@ -30,7 +30,7 @@ import fr.inria.atlanmod.neoemf.data.mapdb.util.MapDbURI;
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
 import fr.inria.atlanmod.neoemf.resource.PersistentResourceFactory;
 
-public class SingletonsMap {
+public class SingletonsMapEMF {
 	
 	public static void main(String[] args) throws IOException {
 		CorePackage.eINSTANCE.eClass();

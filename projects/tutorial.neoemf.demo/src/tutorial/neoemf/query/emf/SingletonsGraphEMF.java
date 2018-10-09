@@ -30,7 +30,7 @@ import fr.inria.atlanmod.neoemf.data.blueprints.util.BlueprintsURI;
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
 import fr.inria.atlanmod.neoemf.resource.PersistentResourceFactory;
 
-public class SingletonsGraph {
+public class SingletonsGraphEMF {
 	
 	public static void main(String[] args) throws IOException {
 		CorePackage.eINSTANCE.eClass();
