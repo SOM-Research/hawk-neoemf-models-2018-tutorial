@@ -1,5 +1,8 @@
 package tutorial.neoemf.demo.importer;
 
+import static tutorial.neoemf.util.QueryUtil.endQuery;
+import static tutorial.neoemf.util.QueryUtil.startQuery;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -21,9 +24,6 @@ import fr.inria.atlanmod.neoemf.data.mapdb.util.MapDbURI;
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
 import fr.inria.atlanmod.neoemf.resource.PersistentResourceFactory;
 import fr.inria.atlanmod.neoemf.util.logging.NeoLogger;
-
-import static tutorial.neoemf.util.QueryUtil.startQuery;
-import static tutorial.neoemf.util.QueryUtil.endQuery;
 
 public class StandardMapImporter {
 	
