@@ -56,13 +56,9 @@ public class SingletonsMap {
 					MethodDeclaration md = (MethodDeclaration)bd;
 					if(nonNull(md.getReturnType()) && md.getReturnType() instanceof SimpleType && ((SimpleType)md.getReturnType()).getName().getFullyQualifiedName().equals(td.getName().getFullyQualifiedName())) {
 						List<ExtendedModifier> modifiers = md.getModifiers();
-						for(ExtendedModifier exMod : modifiers) {
-							if(exMod instanceof Modifier) {
-								Modifier mod = (Modifier)exMod;
-								if(mod.getPublic() == true && mod.getStatic() == true) {
-									results.add(td);
-								}
-							}
+						if(modifiers.stream().anyMatch(exMod -> exMod instanceof Modifier && ((Modifier)exMod).getPublic() == true) &&
+								modifiers.stream().anyMatch(exMod -> exMod instanceof Modifier && ((Modifier)exMod).getStatic() == true )) {
+							results.add(td);
 						}
 					}
 				}
