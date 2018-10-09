@@ -20,6 +20,10 @@ import fr.inria.atlanmod.neoemf.data.blueprints.neo4j.option.BlueprintsNeo4jOpti
 import fr.inria.atlanmod.neoemf.data.blueprints.util.BlueprintsURI;
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
 import fr.inria.atlanmod.neoemf.resource.PersistentResourceFactory;
+import fr.inria.atlanmod.neoemf.util.logging.NeoLogger;
+
+import static tutorial.neoemf.util.QueryUtil.startQuery;
+import static tutorial.neoemf.util.QueryUtil.endQuery;
 
 public class StandardGraphImporter {
 	
@@ -44,9 +48,15 @@ public class StandardGraphImporter {
 		Map<String, Object> graphOptions = BlueprintsNeo4jOptionsBuilder.newBuilder().asMap();
 		graphResource.save(graphOptions);
 		
+		startQuery();
+		
 		graphResource.getContents().addAll(xmiResource.getContents());
 		
 		graphResource.save(graphOptions);
+		
+		endQuery();
+		
+		NeoLogger.info("XMI model {0} migrated to {1}", xmiResource.getURI().toString(), graphResource.getURI().toString());
 		
 		((PersistentResource)graphResource).close();
 	}

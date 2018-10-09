@@ -19,6 +19,10 @@ import fr.inria.atlanmod.neoemf.data.mapdb.option.MapDbOptionsBuilder;
 import fr.inria.atlanmod.neoemf.data.mapdb.util.MapDbURI;
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
 import fr.inria.atlanmod.neoemf.resource.PersistentResourceFactory;
+import fr.inria.atlanmod.neoemf.util.logging.NeoLogger;
+
+import static tutorial.neoemf.util.QueryUtil.startQuery;
+import static tutorial.neoemf.util.QueryUtil.endQuery;
 
 public class MapCounter {
 	
@@ -36,6 +40,8 @@ public class MapCounter {
 		Map<String, Object> mapOptions = MapDbOptionsBuilder.newBuilder().asMap();
 		mapResource.load(mapOptions);
 		
+		startQuery();
+		
 		Iterator<EObject> it = mapResource.getAllContents();
 		int counter = 0;
 		while(it.hasNext()) {
@@ -43,7 +49,9 @@ public class MapCounter {
 			counter++;
 		}
 		
-		System.out.println("Resource " + mapResource.getURI().toString() + " contains " + counter + " elements");
+		NeoLogger.info("Resource {0} contains {1} elements", mapResource.getURI().toString(), counter);
+		
+		endQuery();
 		
 		((PersistentResource)mapResource).close();
 	}

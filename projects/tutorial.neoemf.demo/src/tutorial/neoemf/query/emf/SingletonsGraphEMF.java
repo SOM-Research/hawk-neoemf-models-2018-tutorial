@@ -1,15 +1,16 @@
 package tutorial.neoemf.query.emf;
 
 import static java.util.Objects.nonNull;
+import static tutorial.neoemf.util.QueryUtil.endQuery;
+import static tutorial.neoemf.util.QueryUtil.getAllInstances;
+import static tutorial.neoemf.util.QueryUtil.startQuery;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -29,6 +30,7 @@ import fr.inria.atlanmod.neoemf.data.blueprints.neo4j.option.BlueprintsNeo4jOpti
 import fr.inria.atlanmod.neoemf.data.blueprints.util.BlueprintsURI;
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
 import fr.inria.atlanmod.neoemf.resource.PersistentResourceFactory;
+import fr.inria.atlanmod.neoemf.util.logging.NeoLogger;
 
 public class SingletonsGraphEMF {
 	
@@ -48,6 +50,8 @@ public class SingletonsGraphEMF {
 		
 		List<TypeDeclaration> results = new ArrayList<>();
 		
+		startQuery();
+		
 		List<TypeDeclaration> typeDeclarations = getAllInstances(graphResource, TypeDeclaration.class);
 		for(TypeDeclaration td : typeDeclarations) {
 			List<BodyDeclaration> bodyDeclarations = td.getBodyDeclarations();
@@ -64,23 +68,11 @@ public class SingletonsGraphEMF {
 				}
 			}
 		}
+				
+		NeoLogger.info("Found {0} singletons", results.size());
 		
-		System.out.println("Found " + results.size() + " singletons");
+		endQuery();
 		
 		((PersistentResource)graphResource).close();
 	}
-	
-	private static <T> List<T> getAllInstances(Resource resource, Class<T> clazz) {
-		List<T> results = new ArrayList<>();
-		Iterator<EObject> it = resource.getAllContents();
-		while(it.hasNext()) {
-			EObject eObject = it.next();
-			if(clazz.isInstance(eObject)) {
-				results.add((T)eObject);
-			}
-		}
-		return results;
-		
-	}
-
 }

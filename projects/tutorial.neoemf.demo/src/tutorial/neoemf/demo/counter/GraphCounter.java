@@ -19,6 +19,10 @@ import fr.inria.atlanmod.neoemf.data.blueprints.neo4j.option.BlueprintsNeo4jOpti
 import fr.inria.atlanmod.neoemf.data.blueprints.util.BlueprintsURI;
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
 import fr.inria.atlanmod.neoemf.resource.PersistentResourceFactory;
+import fr.inria.atlanmod.neoemf.util.logging.NeoLogger;
+
+import static tutorial.neoemf.util.QueryUtil.startQuery;
+import static tutorial.neoemf.util.QueryUtil.endQuery;
 
 public class GraphCounter {
 	
@@ -36,6 +40,8 @@ public class GraphCounter {
 		Map<String, Object> graphOptions = BlueprintsNeo4jOptionsBuilder.newBuilder().asMap();
 		graphResource.load(graphOptions);
 		
+		startQuery();
+		
 		Iterator<EObject> it = graphResource.getAllContents();
 		int counter = 0;
 		while(it.hasNext()) {
@@ -43,7 +49,9 @@ public class GraphCounter {
 			counter++;
 		}
 		
-		System.out.println("Resource " + graphResource.getURI().toString() + " contains " + counter + " elements");
+		NeoLogger.info("Resource {0} contains {1} elements", graphResource.getURI().toString(), counter);
+		
+		endQuery();
 		
 		((PersistentResource)graphResource).close();
 	}

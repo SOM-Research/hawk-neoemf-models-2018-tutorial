@@ -20,6 +20,10 @@ import fr.inria.atlanmod.neoemf.data.mapdb.option.MapDbOptionsBuilder;
 import fr.inria.atlanmod.neoemf.data.mapdb.util.MapDbURI;
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
 import fr.inria.atlanmod.neoemf.resource.PersistentResourceFactory;
+import fr.inria.atlanmod.neoemf.util.logging.NeoLogger;
+
+import static tutorial.neoemf.util.QueryUtil.startQuery;
+import static tutorial.neoemf.util.QueryUtil.endQuery;
 
 public class StandardMapImporter {
 	
@@ -44,9 +48,15 @@ public class StandardMapImporter {
 		Map<String, Object> mapOptions = MapDbOptionsBuilder.newBuilder().autocommit().asMap();
 		mapResource.save(mapOptions);
 		
+		startQuery();
+		
 		mapResource.getContents().addAll(xmiResource.getContents());
 		
 		mapResource.save(mapOptions);
+		
+		endQuery();
+		
+		NeoLogger.info("XMI model {0} migrated to {1}", xmiResource.getURI().toString(), mapResource.getURI().toString());
 		
 		((PersistentResource)mapResource).close();
 	}

@@ -1,5 +1,8 @@
 package tutorial.neoemf.query.mogwai;
 
+import static tutorial.neoemf.util.QueryUtil.endQuery;
+import static tutorial.neoemf.util.QueryUtil.startQuery;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,8 +26,8 @@ import fr.inria.atlanmod.mogwai.query.builder.OCLQueryBuilder;
 import fr.inria.atlanmod.neoemf.data.PersistenceBackendFactoryRegistry;
 import fr.inria.atlanmod.neoemf.data.blueprints.BlueprintsPersistenceBackendFactory;
 import fr.inria.atlanmod.neoemf.data.blueprints.neo4j.option.BlueprintsNeo4jOptionsBuilder;
-import fr.inria.atlanmod.neoemf.data.blueprints.util.BlueprintsURI;
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
+import fr.inria.atlanmod.neoemf.util.logging.NeoLogger;
 
 public class SingletonsGraphMogwai {
 	
@@ -54,9 +57,13 @@ public class SingletonsGraphMogwai {
 		Map<String, Object> qOptions = new HashMap<String, Object>();
 		qOptions.put(GremlinScriptRunner.PRINT_SCRIPT_OPTION, true);
 		
+		startQuery();
+		
 		QueryResult result = mogwaiResource.query(query, qOptions);
 		
-		System.out.println("Found " + result.resultSize() + " singletons");
+		NeoLogger.info("Found {0} singletons", result.resultSize());
+		
+		endQuery();
 		
 		((PersistentResource)graphResource).close();
 	}

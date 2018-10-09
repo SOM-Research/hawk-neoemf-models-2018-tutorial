@@ -1,5 +1,8 @@
 package tutorial.neoemf.demo.query.ocl;
 
+import static tutorial.neoemf.util.QueryUtil.endQuery;
+import static tutorial.neoemf.util.QueryUtil.startQuery;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,6 +28,7 @@ import fr.inria.atlanmod.neoemf.data.mapdb.option.MapDbOptionsBuilder;
 import fr.inria.atlanmod.neoemf.data.mapdb.util.MapDbURI;
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
 import fr.inria.atlanmod.neoemf.resource.PersistentResourceFactory;
+import fr.inria.atlanmod.neoemf.util.logging.NeoLogger;
 
 public class SingletonsMapOCL {
 	
@@ -42,12 +46,16 @@ public class SingletonsMapOCL {
 		Map<String, Object> mapOptions = MapDbOptionsBuilder.newBuilder().asMap();
 		mapResource.load(mapOptions);
 		
+		startQuery();
+		
 		try {
 			OCL ocl = OCL.newInstance(EcoreEnvironmentFactory.INSTANCE);
 			OCLInput oclInput = new OCLInput(new FileInputStream(new File("ocl/singletons.ocl")));
 			List<Constraint> constraints = ocl.parse(oclInput);
+			@SuppressWarnings("unchecked")
 			List<EObject> result = (List<EObject>)ocl.createQuery(constraints.get(0)).evaluate(mapResource.getContents().get(0));
-			System.out.println("Found " + result.size() + " singletons");
+			NeoLogger.info("Found {0} singletons", result.size());
+			endQuery();
 		} catch(ParserException e) {
 			System.out.println("Cannot parse the input OCL file");
 			e.printStackTrace();
