@@ -52,6 +52,7 @@ public class SingletonsGraphOCL {
 			OCL ocl = OCL.newInstance(EcoreEnvironmentFactory.INSTANCE);
 			OCLInput oclInput = new OCLInput(new FileInputStream(new File("ocl/singletons.ocl")));
 			List<Constraint> constraints = ocl.parse(oclInput);
+			@SuppressWarnings("unchecked")
 			List<EObject> result = (List<EObject>)ocl.createQuery(constraints.get(0)).evaluate(graphResource.getContents().get(0));
 			NeoLogger.info("Found {0} singletons", result.size());
 			endQuery();
