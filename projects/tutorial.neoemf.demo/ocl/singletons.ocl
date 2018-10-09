@@ -1,0 +1,22 @@
+import DOM : 'org.amma.dsl.jdt.dom'
+
+package DOM
+
+context TypeDeclaration
+	
+def: singletons : Sequence(TypeDeclaration) =
+	TypeDeclaration.allInstances()->
+		select(td | td.bodyDeclarations->exists(
+			bd | 
+				if(bd.oclIsTypeOf(MethodDeclaration)) then
+				let md:MethodDeclaration = bd.oclAsType(MethodDeclaration) in
+					md.returnType.oclIsTypeOf(SimpleType) and
+					md.returnType.oclAsType(SimpleType).name.fullyQualifiedName = td.name.fullyQualifiedName and
+					md.modifiers->exists(mod:Modifier | mod.public = true) and
+					md.modifiers->exists(mod:Modifier | mod._static = true)
+				else
+					false
+				endif
+			)
+		)->asSequence()
+endpackage
