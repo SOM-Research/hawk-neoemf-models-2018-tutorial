@@ -53,10 +53,10 @@ public class StandardGraphImporter {
 		rSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
 		rSet.getResourceFactoryRegistry().getProtocolToFactoryMap().put(BlueprintsURI.SCHEME, PersistentResourceFactory.getInstance());
 		
-		Resource xmiResource = rSet.createResource(URI.createFileURI("../tutorial.common/models/set3/set3.xmi"));
+		Resource xmiResource = rSet.createResource(URI.createFileURI("../tutorial.common/models/set1/set1.xmi"));
 		xmiResource.load(Collections.emptyMap());
 		
-		Resource graphResource = rSet.createResource(BlueprintsURI.createFileURI(new File("models/set3.graphdb")));
+		Resource graphResource = rSet.createResource(BlueprintsURI.createFileURI(new File("models/set1.graphdb")));
 		
 		/*
 		 * Each concrete database implementation provides an OptionsBuilder that allows to customize the modeling framework options 
