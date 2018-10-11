@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="composite">
+	<target name="composite">
+		<eclipse.refreshLocal
+			resource="org.hawk.updatesite"
+			depth="project" />
+
+		<p2.composite.repository>
+			<repository location="${basedir}"/>
+			<add>
+				<!-- Hawk -->
+				<repository location="http://mondo-project.github.io/mondo-hawk/updates/"/>
+				<repository location="https://dl.bintray.com/bluezio/generic/1.2.0-20181007/"/>
+				
+				<!-- NeoEMF -->
+				<repository location="http://www.atlanmod.org/NeoEMF/releases/1.0.2/plugin/"/>
+
+				<!-- Mogwai -->
+				<repository location="http://www.atlanmod.org/Mogwai/"/>
+			</add>
+		</p2.composite.repository>
+	</target>
+</project>
