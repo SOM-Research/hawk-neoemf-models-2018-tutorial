@@ -52,6 +52,11 @@ public class SingletonsGraphEMF {
 		
 		startQuery();
 		
+		/*
+		 * Use the standard EMF API to navigate in the model and retrieve singleton TypeDeclarations.
+		 * Note: NeoEMF implements the full EMF API, and we put a special attention to ensure that calling a NeoEMF method 
+		 * produces the same behavior (including possible side-effects) as standard EMF API calls.
+		 */
 		List<TypeDeclaration> typeDeclarations = getAllInstances(graphResource, TypeDeclaration.class);
 		for(TypeDeclaration td : typeDeclarations) {
 			List<BodyDeclaration> bodyDeclarations = td.getBodyDeclarations();

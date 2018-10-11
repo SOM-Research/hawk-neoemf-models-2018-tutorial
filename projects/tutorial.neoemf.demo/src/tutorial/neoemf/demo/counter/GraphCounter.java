@@ -27,6 +27,9 @@ import static tutorial.neoemf.util.QueryUtil.endQuery;
 public class GraphCounter {
 	
 	public static void main(String[] args) throws IOException {
+		/*
+		 * Registers the EPackages corresponding to the model to import.
+		 */
 		CorePackage.eINSTANCE.eClass();
 		DOMPackage.eINSTANCE.eClass();
 		PrimitiveTypesPackage.eINSTANCE.eClass();
@@ -42,6 +45,13 @@ public class GraphCounter {
 		
 		startQuery();
 		
+		/*
+		 * Perform a full traversal of the model and count the number of elements it contains.
+		 * If the *weakCache* option is set, database records representing EObjects will be garbage-collected after each operation,
+		 * limiting the memory consumption, but increasing the execution time.
+		 * If the *softCache* option is set, database records representing EObjects will stay longer in memory (until the JVM needs to free space),
+		 * speeding up execution at the cost of an increased memory consumption (default option).
+		 */
 		Iterator<EObject> it = graphResource.getAllContents();
 		int counter = 0;
 		while(it.hasNext()) {

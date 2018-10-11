@@ -33,6 +33,9 @@ import fr.inria.atlanmod.neoemf.util.logging.NeoLogger;
 public class SingletonsGraphOCL {
 	
 	public static void main(String[] args) throws IOException {
+		/*
+		 * Registers the EPackages corresponding to the model to import.
+		 */
 		CorePackage.eINSTANCE.eClass();
 		DOMPackage.eINSTANCE.eClass();
 		PrimitiveTypesPackage.eINSTANCE.eClass();
@@ -49,9 +52,15 @@ public class SingletonsGraphOCL {
 		startQuery();
 		
 		try {
+			/*
+			 * Create the OCL environment and load the query from an existing OCL file.
+			 * Note: Mogwaï relies on the OCL Ecore metamodel. Moving to the Pivot metamodel is planned for the next release
+			 * and will provide support for computing queries over UML models.
+			 */
 			OCL ocl = OCL.newInstance(EcoreEnvironmentFactory.INSTANCE);
 			OCLInput oclInput = new OCLInput(new FileInputStream(new File("ocl/singletons.ocl")));
 			List<Constraint> constraints = ocl.parse(oclInput);
+			
 			@SuppressWarnings("unchecked")
 			List<EObject> result = (List<EObject>)ocl.createQuery(constraints.get(0)).evaluate(graphResource.getContents().get(0));
 			NeoLogger.info("Found {0} singletons", result.size());
