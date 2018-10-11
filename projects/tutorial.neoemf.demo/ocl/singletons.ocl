@@ -9,6 +9,7 @@ def: singletons : Sequence(TypeDeclaration) =
 		select(td | td.bodyDeclarations
 			->exists(
 				md:MethodDeclaration | 
+					not md.returnType.oclIsUndefined() and
 					md.returnType.oclIsTypeOf(SimpleType) and
 					md.returnType.oclAsType(SimpleType).name.fullyQualifiedName = td.name.fullyQualifiedName and
 					md.modifiers->exists(mod:Modifier | mod.public = true) and
