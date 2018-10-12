@@ -1,16 +1,20 @@
-Installing NeoEMF/Mogwaï tutorial
+﻿Installing NeoEMF/Mogwaï tutorial
 
 1 - Install NeoEMF update site: http://www.atlanmod.org/NeoEMF/releases/1.0.2/plugin/
 2 - Install Mogwaï update site: http://www.atlanmod.org/Mogwai/ (untick "Group Item b Category" if necessary)
-3 - Import hawk-neoemf-models-2018-tutorial/projects/{tutorial.common|tutorial.neoemf.jdtast|tutorial.neoemf.demo}
-4 - Unzip hawk-neoemf-models-2018/projects/tutorial.common/models/set1/set1.zip in hawk-neoemf-models-2018/projects/tutorial.common/models/set1/set1.xmi
-5 - Run tutorial.neoemf.demo/tutorial.neoemf.demo.importer.StandardGraphImporter
-6 - This should create a new NeoEMF model "set1.graphdb" in tutorial.neoemf.demo/models/
-7 - Right click on tutorial.neoemf.jdtast/model/JDTAST.ecore -> register EPackages
-8 - Right click on tutorial.neoemf.demo/models/set1.graphdb -> NeoEMF -> open model database
-9 - Browse the model in the editor
-10 - Close the editor (embedded Neo4j: does not support multiple connections)
-11 - Run tutorial.neoemf.demo/tutorial.neoemf.demo.counter.GraphCounter -> the console should print "Resource [...]/set1.graphdb contains 197699 elements"
-12 - Run tutorial.neoemf.demo/tutorial.neoemf.demo.query.emf.SingletonsGraphEMF -> the console should print "Found 2 singletons"
-13 - Run tutorial.neoemf.demo/tutorial.neoemf.demo.query.ocl.SingletonsGraphOCL -> the console should print "Found 2 singletons"
-14 - Run tutorial.neoemf.demo/tutorial.neoemf.demo.query.mogwai.SingletonsGraphMogwai -> the console should print "Found 2 singletons"
+3 - Import hawk-neoemf-models-2018-tutorial/projects/tutorial.neoemf.jdtast
+4 - Start a new Eclipse instance: right click on tutorial.neoemf.jdtast/Eclipse Application.launch -> run as -> Eclipse Application
+5 - This will allow NeoEMF to use the generated code for the JDTAST metamodel
+6 - Import hawk-neoemf-models-2018-tutorial/projects/{tutorial.common|tutorial.neoemf.demo} in the new Eclipse application
+7 - Unzip hawk-neoemf-models-2018/projects/tutorial.common/models/set1/set1.zip in hawk-neoemf-models-2018/projects/tutorial.common/models/set1/set1.xmi
+8 - Open tutorial.neoemf.demo/tutorial.neoemf.demo.importer.StandardGraphImporter
+9 - Run 01-StandardGraphImporter.launch -> run as -> Java application
+10 - This should create a new NeoEMF model "set1.graphdb" in tutorial.neoemf.demo/models/
+11 - Refresh the project: tutorial.neoemf.demo -> right click -> refresh
+12 - Right click on tutorial.neoemf.demo/models/set1.graphdb -> NeoEMF -> open model database
+13 - Browse the model in the editor
+14 - Close the editor (embedded Neo4j: does not support multiple connections)
+11 - Open tutorial.neoemf.demo/tutorial.neoemf.demo.counter.GraphCounter and run 02-GraphCounter.launch -> the console should print "Resource [...]/set1.graphdb contains 197699 elements"
+12 - Open tutorial.neoemf.demo/tutorial.neoemf.demo.query.emf.SingletonsGraphEMF and run 03-SingletonsGraphEMF.launch -> the console should print "Found 2 singletons"
+13 - Open tutorial.neoemf.demo/tutorial.neoemf.demo.query.ocl.SingletonsGraphOCL and run 04-SingletonsGraphOCL.launch -> the console should print "Found 2 singletons"
+14 - Open tutorial.neoemf.demo/tutorial.neoemf.demo.query.mogwai.SingletonsGraphMogwai and run 05-SingletonsGraphMogwai.launch -> the console should print "Found 2 singletons"
