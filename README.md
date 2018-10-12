@@ -15,10 +15,11 @@ For this tutorial, please install these features:
 * Hawk:
     * all backends
     * within Hawk Clients: Eclipse UI
-    * all connectors
-    * all model drivers
-    * all query languages
-    * time-aware indexing
+    * all in Connectors
+    * all in Core
+    * all in Model Drivers
+    * all in Query Languages
+    * all in time-aware indexing
 * NeoEMF: all
 * Mogwai: all
 
