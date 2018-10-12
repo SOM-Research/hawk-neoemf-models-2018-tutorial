@@ -20,6 +20,6 @@ For this tutorial, please install these features:
     * all query languages
     * time-aware indexing
 * NeoEMF: all
-* Mogwai: all (uncheck "Group items by category")
+* Mogwai: all
 
 When indexing the larger models (set2 onwards, especially set4), you will want to tweak your `eclipse.ini` file to use `-Xms8g` and `-Xmx8g`. This is currently needed to parse some of the large monolithic XMI files.
